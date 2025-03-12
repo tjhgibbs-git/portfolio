@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Thomas JH Gibbs | Data Professional{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+    
+    <div class="container hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Transforming Data Challenges into <span class="text-gradient">Business Solutions</span>
+            </h1>
+            <h2 class="hero-subtitle">Data Scientist & Project Leader</h2>
+            <p class="hero-text">
+                I bridge technical expertise with practical business solutions, 
+                specializing in AI-driven segmentation, causal inference, 
+                and creating usable data products across diverse environments.
+            </p>
+            <div class="hero-cta">
+                <a href="{% url 'portfolio' %}" class="btn">View Projects</a>
+                <a href="{% url 'contact' %}" class="btn btn-outline">Get In Touch</a>
+            </div>
+        </div>
+        
+        <div class="hero-image">
+            <img src="{% static 'images/data-visualization.png' %}" alt="Data visualization" />
+        </div>
+    </div>
+</section>
+
+<section id="skills">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">My Expertise</h2>
+            <p class="section-subtitle">Where data meets business impact</p>
+        </div>
+        
+        <div class="skills-container">
+            <div class="skill-card">
+                <div class="skill-icon">📊</div>
+                <h3 class="skill-title">Data Strategy & Leadership</h3>
+                <ul class="skill-list">
+                    <li>Requirements gathering</li>
+                    <li>Roadmap development</li>
+                    <li>Cross-functional collaboration</li>
+                    <li>Stakeholder management</li>
+                </ul>
+            </div>
+            
+            <div class="skill-card">
+                <div class="skill-icon">🛠️</div>
+                <h3 class="skill-title">Technical Expertise</h3>
+                <ul class="skill-list">
+                    <li>Python, SQL, PySpark</li>
+                    <li>Databricks, AWS</li>
+                    <li>Production data pipelines</li>
+                    <li>Cloud architectures</li>
+                </ul>
+            </div>
+            
+            <div class="skill-card">
+                <div class="skill-icon">🧠</div>
+                <h3 class="skill-title">Analytics & AI</h3>
+                <ul class="skill-list">
+                    <li>Predictive modeling</li>
+                    <li>Causal inference for marketing</li>
+                    <li>Customer segmentation</li>
+                    <li>Visualization & dashboards</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
