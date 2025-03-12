@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Thomas JH Gibbs | Portfolio{% endblock %}
+
+{% block content %}
+<section class="portfolio-hero">
+    <div class="container">
+        <div class="section-header">
+            <h1 class="section-title">My Projects</h1>
+            <p class="section-subtitle">Data science, engineering, and web development</p>
+        </div>
+        
+        <div class="portfolio-filter">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="ai">AI</button>
+            <button class="filter-btn" data-filter="data">Data Science</button>
+            <button class="filter-btn" data-filter="web">Web Development</button>
+        </div>
+    </div>
+</section>
+
+<section class="portfolio-grid">
+    <div class="container">
+        <div class="projects-grid">
+            {% for project in projects %}
+            <div class="project-card" data-categories="{{ project.technologies|lower }}">
+                <div class="project-image">
+                    {% if project.image %}
+                    <img src="{{ project.image.url }}" alt="{{ project.title }}" />
+                    {% else %}
+                    <img src="{% static 'images/project-placeholder.jpg' %}" alt="{{ project.title }}" />
+                    {% endif %}
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">{{ project.title }}</h3>
+                    <div class="project-tags">
+                        {% for tech in project.get_technologies_list %}
+                        <span class="project-tag">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                    <p class="project-description">{{ project.short_description }}</p>
+                    <div class="project-links">
+                        <a href="{% url 'project_detail' project.slug %}" class="project-link">View Details →</a>
+                        {% if project.url %}
+                        <a href="{{ project.url }}" class="project-link github-link" target="_blank">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                            Visit
+                        </a>
+                        {% endif %}
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" class="project-link github-link" target="_blank">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                            </svg>
+                            Code
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-projects">
+                <p>No projects available yet. Check back soon!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-card');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                projectCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        const categories = card.getAttribute('data-categories');
+                        if (categories.includes(filter)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

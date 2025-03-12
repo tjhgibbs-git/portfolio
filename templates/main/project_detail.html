@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} | Thomas JH Gibbs{% endblock %}
+
+{% block content %}
+<section class="project-detail">
+    <div class="container">
+        <div class="project-header">
+            <h1 class="project-title">{{ project.title }}</h1>
+            <div class="project-meta">
+                <div class="project-tags">
+                    {% for tech in project.get_technologies_list %}
+                    <span class="project-tag">{{ tech }}</span>
+                    {% endfor %}
+                </div>
+                <div class="project-date">{{ project.date_created|date:"F Y" }}</div>
+            </div>
+        </div>
+        
+        <div class="project-content-wrapper">
+            <div class="project-image-large">
+                {% if project.image %}
+                <img src="{{ project.image.url }}" alt="{{ project.title }}" />
+                {% else %}
+                <img src="{% static 'images/project-placeholder.jpg' %}" alt="{{ project.title }}" />
+                {% endif %}
+            </div>
+            
+            <div class="project-description-full">
+                {{ description_html }}
+            </div>
+            
+            {% if project.additional_images.exists %}
+            <div class="project-gallery">
+                <h2>Project Gallery</h2>
+                <div class="gallery-grid">
+                    {% for image in project.additional_images.all %}
+                    <div class="gallery-item">
+                        <img src="{{ image.image.url }}" alt="{{ image.caption }}" />
+                        {% if image.caption %}
+                        <p class="gallery-caption">{{ image.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="project-links">
+                {% if project.url %}
+                <a href="{{ project.url }}" class="btn" target="_blank">See the project</a>
+                {% endif %}
+                
+                {% if project.github_url %}
+                <a href="{{ project.github_url }}" class="btn" target="_blank">View Code</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

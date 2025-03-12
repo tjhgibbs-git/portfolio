@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About | Thomas JH Gibbs{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+    <div class="container">
+        <h1 class="section-title">About Me</h1>
+        <p class="about-intro">
+            Data professional who enjoys solving real-world problems through accessible solutions. 
+            When I'm not building data products, you'll find me running marathons, 
+            snapping film photos, or exploring new places.
+        </p>
+    </div>
+</section>
+
+<section class="about-section interests-section">
+    <div class="container">
+        <h2 class="subsection-title">Outside Work</h2>
+        <p>It's not all computer</p>
+        
+        <div class="interests-grid">
+            <div class="interest-card">
+                <div class="interest-image">
+                    <img src="{% static 'images/marathon.jpg' %}" alt="Marathon Running" />
+                    <div class="image-caption">Istanbul Marathon 2024 - Number 4 of (hopefully) 10</div>
+                </div>
+                <div class="interest-content">
+                    <h3>Marathon Runner</h3>
+                    <p>Reluctant but (currently) regular - planning to keep going for now.</p>
+                </div>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-image">
+                    <img src="{% static 'images/travel2.jpg' %}" alt="Film Photography" />
+                    <div class="image-caption">South of France, near Marseille</div>
+                </div>
+                <div class="interest-content">
+                    <h3>Film Photography</h3>
+                    <p>This <a href="https://bsky.app/profile/merrittk.com/post/3kd67oautew2r">gets it better than I can</a></p>
+                </div>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-image">
+                    <img src="{% static 'images/dog1.jpg' %}" alt="Ludo" />
+                    <div class="image-caption">Meet Ludo, my enthusiastic packing partner</div>
+                </div>
+                <div class="interest-content">
+                    <h3>Dog lover</h3>
+                    <p>Sadly not mine - but a welcome pandemic companion</p>
+                </div>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-image">
+                    <img src="{% static 'images/dog2.jpg' %}" alt="Ludo" />
+                    <div class="image-caption">He's a good boy</div>
+                </div>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-image">
+                    <img src="{% static 'images/travel.jpg' %}" alt="New Zealand" />
+                    <div class="image-caption">Kayaking in New Zealand</div>
+                </div>
+            </div>
+            
+            <div class="interest-card">
+                <div class="interest-image">
+                    <img src="{% static 'images/film_photo.jpg' %}" alt="Piano" />
+                    <div class="image-caption">The Tongariro Crossing</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-section skills-brief">
+    <div class="container">
+        <h2 class="subsection-title">Technical Skills</h2>
+        <p>For the professionally curious, here's a quick overview of my technical toolkit:</p>
+        
+        <div class="skills-flexbox">
+            <div class="skill-group">
+                <h3>Data Engineering</h3>
+                <ul>
+                    <li>Python & SQL</li>
+                    <li>PySpark for big data processing</li>
+                    <li>Databricks workflows and jobs</li>
+                </ul>
+            </div>
+            
+            <div class="skill-group">
+                <h3>Analytics & Insights</h3>
+                <ul>
+                    <li>Predictive modeling</li>
+                    <li>Customer segmentation (UMAP, HDBSCAN)</li>
+                    <li>Causal inference methods</li>
+                </ul>
+            </div>
+            
+            <div class="skill-group">
+                <h3>Other Skills</h3>
+                <ul>
+                    <li>Requirements gathering</li>
+                    <li>Project management</li>
+                    <li>Making complex ideas simple</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
