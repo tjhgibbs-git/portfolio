@@ -1,0 +1,225 @@
+/* Custom CSS for blog admin interface
+ * Makes the admin interface better for blog editing on mobile and desktop
+ * Place this file in your static/admin/css/ directory
+ */
+
+/* General improvements */
+.blog-post-admin .module {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    border: 1px solid #eaeaea;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.blog-post-admin h2 {
+    background: #f8f8f8;
+    padding: 12px 15px;
+    font-size: 16px;
+    margin: 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+/* Make form fields nicer */
+.blog-post-admin .form-row {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.blog-post-admin .form-row:last-child {
+    border-bottom: none;
+}
+
+/* Style the post type selector */
+.blog-post-admin select#id_post_type {
+    border: 2px solid #e0e0e0;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 15px;
+    background-color: #f9f9f9;
+}
+
+.blog-post-admin select#id_post_type option[value="article"] {
+    background-color: #e6f7f8;
+}
+
+.blog-post-admin select#id_post_type option[value="link"] {
+    background-color: #fef2ed;
+}
+
+.blog-post-admin select#id_post_type option[value="note"] {
+    background-color: #fffbe6;
+}
+
+/* Custom styling for tags selector */
+.blog-post-admin .related-widget-wrapper {
+    position: relative;
+}
+
+.blog-post-admin .select2-container {
+    width: 100% !important;
+}
+
+.blog-post-admin .select2-selection {
+    min-height: 45px !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 5px !important;
+}
+
+.blog-post-admin .select2-selection__choice {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #4a5568 !important;
+    border-radius: 15px !important;
+    padding: 2px 10px !important;
+    margin: 3px !important;
+}
+
+/* Style the slug field */
+.blog-post-admin #id_slug {
+    font-family: monospace;
+    background-color: #f5f5f5;
+}
+
+/* Style the publish checkbox to be more prominent */
+.blog-post-admin .field-is_published {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px !important;
+}
+
+.blog-post-admin .field-is_published .help {
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+    /* Full width layout on mobile */
+    #content {
+        width: 100% !important;
+    }
+    
+    .blog-post-admin #content-main {
+        float: none;
+        width: 100%;
+    }
+    
+    /* Larger touch targets */
+    .blog-post-admin input[type="text"],
+    .blog-post-admin input[type="url"],
+    .blog-post-admin input[type="email"],
+    .blog-post-admin select,
+    .blog-post-admin textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px !important;
+        margin-bottom: 10px;
+    }
+    
+    /* Make checkboxes easier to tap */
+    .blog-post-admin input[type="checkbox"] {
+        transform: scale(1.5);
+        margin: 10px;
+    }
+    
+    /* Larger submit buttons */
+    .blog-post-admin input[type="submit"],
+    .blog-post-admin .button {
+        padding: 12px 20px !important;
+        font-size: 16px !important;
+        height: auto !important;
+        margin: 5px;
+    }
+    
+    /* Stack the action buttons on mobile */
+    .submit-row {
+        display: flex;
+        flex-direction: column;
+        padding: 10px !important;
+    }
+    
+    .submit-row input,
+    .submit-row a.button {
+        width: 100%;
+        margin: 5px 0 !important;
+        text-align: center;
+    }
+    
+    /* Fix Django's default small padding on mobile */
+    .blog-post-admin fieldset {
+        padding: 5px !important;
+    }
+    
+    /* Fix inline image admin */
+    .blog-post-admin .inline-group .tabular td {
+        padding: 10px 5px !important;
+    }
+}
+
+/* Markdown editor enhancements */
+.CodeMirror {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+.CodeMirror-fullscreen {
+    z-index: 1001; /* Above Django admin header */
+}
+
+/* Custom styling for the preview pane */
+.editor-preview, 
+.editor-preview-side {
+    background: #fff;
+    padding: 15px;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.editor-preview h1, 
+.editor-preview h2, 
+.editor-preview h3,
+.editor-preview-side h1, 
+.editor-preview-side h2, 
+.editor-preview-side h3 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+.editor-preview code, 
+.editor-preview-side code {
+    background: #f5f5f5;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.editor-preview pre, 
+.editor-preview-side pre {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+/* Status bar for markdown editor */
+.editor-statusbar {
+    padding: 8px 10px;
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+}
+
+/* Fix for side-by-side preview on mobile */
+@media (max-width: 767px) {
+    .EasyMDEContainer .CodeMirror-sided {
+        width: 100% !important;
+    }
+    
+    .EasyMDEContainer .editor-preview-side {
+        display: none;
+    }
+    
+    .EasyMDEContainer.sided--no-fullscreen .editor-toolbar {
+        width: 100% !important;
+    }
+}
