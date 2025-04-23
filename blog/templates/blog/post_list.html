@@ -1,0 +1,131 @@
+# blog/templates/blog/post_list.html
+{% extends "blog/base_blog.html" %}
+{% load static %}
+
+{% block title %}
+    {% if tag %}{{ tag.name }} - {% endif %}{% if search_query %}Search: {{ search_query }} - {% endif %}Data Notebook | Thomas Gibbs
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="main-content">
+        {% if tag %}
+            <div class="filter-notice">
+                <p>Showing posts tagged with: <strong>{{ tag.name }}</strong> <a href="{% url 'blog:post_list' %}" class="clear-filter">(clear filter)</a></p>
+            </div>
+        {% endif %}
+        
+        {% if search_query %}
+            <div class="filter-notice">
+                <p>Search results for: <strong>{{ search_query }}</strong> <a href="{% url 'blog:post_list' %}" class="clear-filter">(clear search)</a></p>
+            </div>
+        {% endif %}
+        
+        <div class="blog-posts">
+            {% for post in posts %}
+                <article class="post post-{{ post.post_type }}">
+                    <header class="post-header">
+                        <time class="post-date">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                            </svg>
+                            {{ post.published_at|date:"F j, Y" }}
+                        </time>
+                        <h2 class="post-title">
+                            {% if post.post_type == 'link' %}
+                                <a href="{{ post.external_url }}" class="post-title-link" target="_blank">
+                                    {{ post.title }}
+                                </a>
+                            {% else %}
+                                <a href="{{ post.get_absolute_url }}" class="post-title-link">
+                                    {{ post.title }}
+                                </a>
+                            {% endif %}
+                        </h2>
+                        
+                        {% if post.tags.exists %}
+                        <div class="post-meta">
+                            {% for tag in post.tags.all|slice:":1" %}
+                            <div class="post-meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+                                    <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                                {{ tag.name }}
+                            </div>
+                            {% endfor %}
+                            {% if post.tags.count > 1 %}
+                            <div class="post-meta-item">+{{ post.tags.count|add:"-1" }} more</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </header>
+                    
+                    <div class="post-content">
+                        {% if post.post_type != 'article' or not post.is_long_post %}
+                            {{ post.content_html|safe }}
+                            
+                            {% if post.post_type == 'link' or post.post_type == 'note' %}
+                                <a href="{{ post.get_absolute_url }}" class="permalink"># permalink</a>
+                            {% endif %}
+                        {% else %}
+                            {% if post.excerpt %}
+                                {{ post.excerpt_html|safe }}
+                            {% else %}
+                                {{ post.content_html|truncatewords_html:100|safe }}
+                            {% endif %}
+                            
+                            <div class="post-read-more">
+                                <a href="{{ post.get_absolute_url }}" class="read-more-link">
+                                    Continue reading 
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        {% endif %}
+                        
+                        {% if post.tags.exists and post.post_type == 'article' %}
+                            <div class="post-tags">
+                                {% for tag in post.tags.all %}
+                                    <a href="{% url 'blog:posts_by_tag' tag.slug %}" class="post-tag">{{ tag.name }}</a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+            {% empty %}
+                <div class="no-posts">
+                    <p>No posts found.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="search-box">
+                <div class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </div>
+                <form method="get" action="{% url 'blog:post_list' %}">
+                    <input type="text" name="search" class="search-input" placeholder="Search..." value="{{ search_query|default:'' }}">
+                </form>
+            </div>
+        </div>
+        
+        {% if all_tags %}
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">Tags</h3>
+            <div class="tag-cloud">
+                {% for tag in all_tags %}
+                    <a href="{% url 'blog:posts_by_tag' tag.slug %}">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </aside>
+</div>
+{% endblock %}

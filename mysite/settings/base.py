@@ -17,7 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',  # Add your main app here
+    'main',
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -80,3 +81,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Add static root for collection
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

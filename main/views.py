@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from .models import Project
 import markdown
 from django.utils.safestring import mark_safe
+from django.shortcuts import redirect
+from blog.views import post_list
 
 def home(request):
     return render(request, 'main/home.html')
@@ -28,4 +30,4 @@ def contact(request):
     return render(request, 'main/contact.html')
 
 def blog(request):
-    return render(request, 'main/blog.html')
+    return post_list(request)
