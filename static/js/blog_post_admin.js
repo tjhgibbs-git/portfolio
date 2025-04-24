@@ -1,11 +1,19 @@
 /**
  * Custom JavaScript for the blog post admin
- * Adds a modern Markdown editor with mobile support
+ * Adds a modern Markdown editor with mobile support and image paste functionality
  */
 
 document.addEventListener('DOMContentLoaded', function() {
     // Only run on post add/change forms
     if (!document.getElementById('id_content')) return;
+
+    // Get post ID if available (for existing posts)
+    const postIdInput = document.querySelector('input[name="post_id"]');
+    const postId = postIdInput ? postIdInput.value : 'new';
+    
+    // Get the current form's action URL to extract CSRF token
+    const form = document.querySelector('form');
+    const csrfToken = form ? form.querySelector('input[name="csrfmiddlewaretoken"]').value : '';
 
     // Initialize the EasyMDE Markdown editor for the content field
     const easyMDE = new EasyMDE({
@@ -30,7 +38,185 @@ document.addEventListener('DOMContentLoaded', function() {
         placeholder: "Write your content here using Markdown...",
         maxHeight: '500px',
         minHeight: '300px',
+        // Enable paste images
+        uploadImage: true,
+        imageUploadFunction: handleImageUpload,
     });
+
+    // Save reference to CodeMirror instance
+    const cm = easyMDE.codemirror;
+
+    // Handle pasted images
+    cm.on('paste', function(editor, event) {
+        const clipboardData = event.clipboardData || window.clipboardData;
+        
+        // Check if clipboardData contains files (images)
+        if (clipboardData && clipboardData.files && clipboardData.files.length > 0) {
+            const file = clipboardData.files[0];
+            
+            // Check if the file is an image
+            if (file.type.startsWith('image/')) {
+                event.preventDefault(); // Prevent default paste behavior
+                
+                // Insert a placeholder while the image uploads
+                const loadingPlaceholder = `![Uploading image...](loading)`;
+                const cursor = cm.getCursor();
+                cm.replaceRange(loadingPlaceholder, cursor);
+                const placeholderPos = {
+                    from: cursor,
+                    to: { line: cursor.line, ch: cursor.ch + loadingPlaceholder.length }
+                };
+                
+                // Read the image file and send it to the server
+                processImageFile(file, placeholderPos);
+            }
+        } else if (clipboardData && clipboardData.items) {
+            // For browsers that support clipboardData.items (most modern browsers)
+            for (let i = 0; i < clipboardData.items.length; i++) {
+                const item = clipboardData.items[i];
+                if (item.type.indexOf('image') !== -1) {
+                    event.preventDefault(); // Prevent default paste behavior
+                    
+                    // Get the image file
+                    const file = item.getAsFile();
+                    
+                    // Insert a placeholder while the image uploads
+                    const loadingPlaceholder = `![Uploading image...](loading)`;
+                    const cursor = cm.getCursor();
+                    cm.replaceRange(loadingPlaceholder, cursor);
+                    const placeholderPos = {
+                        from: cursor,
+                        to: { line: cursor.line, ch: cursor.ch + loadingPlaceholder.length }
+                    };
+                    
+                    // Read the image file and send it to the server
+                    processImageFile(file, placeholderPos);
+                    break;
+                }
+            }
+        }
+    });
+
+    // Process image file and upload to server
+    function processImageFile(file, placeholderPos) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const imageData = e.target.result; // Base64 encoded image data
+            
+            // Upload the image to the server
+            uploadImageData(imageData, function(response) {
+                if (response.success) {
+                    // Create the markdown for the image
+                    const imageMarkdown = `![Image](${response.url})`;
+                    
+                    // Replace the placeholder with the actual image markdown
+                    cm.replaceRange(imageMarkdown, placeholderPos.from, placeholderPos.to);
+                    
+                    // Store the uploaded image info in a hidden field if it's a temporary upload
+                    if (response.is_temp) {
+                        storeTemporaryImageInfo(response.temp_path, response.url);
+                    }
+                } else {
+                    // Show error and remove placeholder
+                    alert('Failed to upload image: ' + (response.error || 'Unknown error'));
+                    cm.replaceRange('', placeholderPos.from, placeholderPos.to);
+                }
+            });
+        };
+        
+        reader.readAsDataURL(file);
+    }
+
+    // Upload the image data to the server
+    function uploadImageData(imageData, callback) {
+        const formData = new FormData();
+        formData.append('image_data', imageData);
+        formData.append('post_id', postId);
+        
+        fetch('/blog/upload/image/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrfToken,
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            callback(data);
+        })
+        .catch(error => {
+            console.error('Error uploading image:', error);
+            callback({ success: false, error: 'Network error' });
+        });
+    }
+
+    // Handle image upload from toolbar button
+    function handleImageUpload(file, onSuccess, onError) {
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('post_id', postId);
+        
+        fetch('/blog/upload/image/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrfToken,
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                onSuccess(data.url);
+                
+                // Store the uploaded image info if it's a temporary upload
+                if (data.is_temp) {
+                    storeTemporaryImageInfo(data.temp_path, data.url);
+                }
+            } else {
+                onError(data.error || 'Failed to upload image');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading image:', error);
+            onError('Network error');
+        });
+    }
+
+    // Store temporary image paths to be processed on form submit
+    function storeTemporaryImageInfo(tempPath, url) {
+        // Check if we have a container for temporary images
+        let tempImagesContainer = document.getElementById('temp-images-container');
+        
+        if (!tempImagesContainer) {
+            // Create a container for temporary images if it doesn't exist
+            tempImagesContainer = document.createElement('div');
+            tempImagesContainer.id = 'temp-images-container';
+            tempImagesContainer.style.display = 'none';
+            form.appendChild(tempImagesContainer);
+        }
+        
+        // Create a hidden input for this image
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'temp_images';
+        input.value = JSON.stringify({ path: tempPath, url: url });
+        tempImagesContainer.appendChild(input);
+    }
+
+    // Process temporary images on form submit
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // The form will handle the submission normally
+            // The backend will process the temporary images
+            
+            // Optionally, get content from EasyMDE if needed
+            const contentField = document.getElementById('id_content');
+            if (contentField) {
+                contentField.value = easyMDE.value();
+            }
+        });
+    }
 
     // Adjust editor for better mobile experience
     function adjustForMobile() {

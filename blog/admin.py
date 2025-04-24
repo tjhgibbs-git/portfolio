@@ -4,6 +4,9 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.urls import reverse
 from .models import Post, Tag, PostImage
+from django.core.files.storage import default_storage
+import json
+from django.core.files.base import ContentFile
 
 
 class PostImageInline(admin.TabularInline):
@@ -20,6 +23,9 @@ class PostImageInline(admin.TabularInline):
 
 class PostAdminForm(forms.ModelForm):
     """Custom form for Post admin with better mobile support"""
+    # Hidden field to track temporary images
+    temp_images = forms.CharField(required=False, widget=forms.HiddenInput, initial='[]')
+    
     class Meta:
         model = Post
         fields = '__all__'
@@ -96,7 +102,7 @@ class PostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         (None, {
-            'fields': ('title', 'slug'),
+            'fields': ('title', 'slug', 'temp_images'),  # Added temp_images field
             'classes': ('wide',),
         }),
         ('Content', {
@@ -126,10 +132,63 @@ class PostAdmin(admin.ModelAdmin):
         js = ('https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js', 'js/blog_post_admin.js')
     
     def save_model(self, request, obj, form, change):
-        # Set published_at timestamp when post is published
-        if obj.is_published and not obj.published_at:
-            obj.published_at = timezone.now()
+        # First save the post to get an ID
         super().save_model(request, obj, form, change)
+        
+        # Process any temporarily uploaded images and associate them with the post
+        temp_images_data = []
+        
+        # Get temp images from individual hidden inputs
+        temp_image_inputs = request.POST.getlist('temp_images', [])
+        for temp_image_json in temp_image_inputs:
+            if temp_image_json:
+                try:
+                    temp_images_data.append(json.loads(temp_image_json))
+                except json.JSONDecodeError:
+                    continue
+        
+        # Process each temporary image
+        for img_data in temp_images_data:
+            if 'path' in img_data and img_data['path'].startswith('blog/images/temp/'):
+                # Read the temporary file
+                try:
+                    with default_storage.open(img_data['path']) as f:
+                        content = f.read()
+                    
+                    # Create a new permanent file
+                    filename = img_data['path'].split('/')[-1]
+                    permanent_path = f"blog/images/{obj.created_at.year}/{obj.created_at.month}/{filename}"
+                    
+                    # Save to permanent location
+                    content_file = ContentFile(content)
+                    permanent_file = default_storage.save(permanent_path, content_file)
+                    
+                    # Create a PostImage object
+                    post_image = PostImage(
+                        post=obj,
+                        image=permanent_file,
+                        caption='',
+                        order=obj.images.count()
+                    )
+                    post_image.save()
+                    
+                    # Replace the temporary URL in the content with the permanent one
+                    if 'url' in img_data:
+                        obj.content = obj.content.replace(
+                            img_data['url'], 
+                            default_storage.url(permanent_file)
+                        )
+                    
+                    # Delete the temporary file
+                    default_storage.delete(img_data['path'])
+                    
+                except Exception as e:
+                    # Log the error but continue processing
+                    print(f"Error processing temporary image: {e}")
+        
+        # Update the post with the new content if needed
+        if temp_images_data:
+            obj.save(update_fields=['content'])
     
     def colored_title(self, obj):
         """Display title with a color indicator of post type"""

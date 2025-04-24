@@ -209,6 +209,45 @@
     border-top: 1px solid #eee;
 }
 
+/* Image upload styling */
+.image-upload-progress {
+    display: inline-block;
+    width: 100px;
+    height: 5px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.image-upload-progress-bar {
+    height: 100%;
+    background: #4CAF50;
+    width: 0;
+    transition: width 0.3s;
+}
+
+/* Style for inline images in the editor */
+.editor-preview img, 
+.editor-preview-side img {
+    max-width: 100%;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+/* Highlight images when they're pasted */
+.CodeMirror-line .cm-image {
+    background-color: rgba(255, 255, 0, 0.1);
+    padding: 2px 0;
+}
+
+/* Temp images container */
+#temp-images-container {
+    display: none;
+}
+
 /* Fix for side-by-side preview on mobile */
 @media (max-width: 767px) {
     .EasyMDEContainer .CodeMirror-sided {
