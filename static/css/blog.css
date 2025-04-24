@@ -645,6 +645,14 @@ ol li {
     box-shadow: var(--card-shadow);
 }
 
+/* Fix for image margins to ensure equal spacing on both sides */
+.post-content img {
+    max-width: calc(100% - 2rem);
+    margin-left: 1rem;
+    margin-right: 1rem;
+    display: block;
+}
+
 /* Mobile responsive styles */
 @media (min-width: 768px) {
     .sidebar {
