@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'blog',
+    'tools',  # New tools app
 ]
 
 MIDDLEWARE = [
@@ -84,3 +85,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Tools settings
+TOOLS_EXPORT_DIR = BASE_DIR / 'tools_backup'  # Where exported tools will be saved

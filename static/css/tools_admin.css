@@ -1,0 +1,108 @@
+/* Tools Admin Styling */
+
+/* Make the HTML content textarea larger and more code-friendly */
+.field-html_content textarea {
+    font-family: 'Monaco', 'Consolas', 'Courier New', monospace !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    min-height: 400px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 6px !important;
+    padding: 12px !important;
+}
+
+.field-html_content textarea:focus {
+    border-color: #417690 !important;
+    box-shadow: 0 0 0 2px rgba(65, 118, 144, 0.1) !important;
+}
+
+/* Tool preview styling */
+.field-preview_tool {
+    margin-top: 20px;
+}
+
+.field-preview_tool .readonly {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0;
+    margin: 0;
+}
+
+/* Enhanced list display */
+.change-list .action-checkbox-column {
+    width: 1.5em;
+}
+
+.change-list .result_list th,
+.change-list .result_list td {
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+.change-list .result_list .field-preview_link a {
+    background: #417690;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.change-list .result_list .field-preview_link a:hover {
+    background: #205067;
+}
+
+.change-list .result_list .field-needs_export_display {
+    font-weight: bold;
+}
+
+/* Fieldset improvements */
+.module h2 {
+    background: #f8f8f8;
+    color: #333;
+    padding: 12px 15px;
+    margin: 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.module .description {
+    padding: 10px 15px;
+    background: #f0f8ff;
+    border-left: 4px solid #417690;
+    margin: 0;
+    font-style: italic;
+    color: #333;
+}
+
+/* Success message styling for tool links */
+.messagelist .success {
+    background: #dfd;
+    border-color: #6c6;
+}
+
+.messagelist .success a {
+    color: #046;
+    font-weight: bold;
+}
+
+/* Form row improvements */
+.form-row {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.form-row:last-child {
+    border-bottom: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .field-html_content textarea {
+        min-height: 300px !important;
+        font-size: 11px !important;
+    }
+}
