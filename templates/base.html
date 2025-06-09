@@ -24,6 +24,7 @@
                     <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
                     <li><a href="{% url 'about' %}" class="{% if 'about' in request.path %}active{% endif %}">About</a></li>
                     <li><a href="{% url 'portfolio' %}" class="{% if 'portfolio' in request.path %}active{% endif %}">Projects</a></li>
+                    <li><a href="{% url 'tools:list' %}" class="{% if 'tools' in request.path %}active{% endif %}">Tools</a></li>
                     <li><a href="{% url 'blog' %}" class="{% if 'blog' in request.path %}active{% endif %}">Blog</a></li>
                     <li><a href="{% url 'contact' %}" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
                 </ul>
