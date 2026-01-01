@@ -136,6 +136,7 @@ class RecipeAdmin(admin.ModelAdmin):
         ('Publishing', {
             'fields': ('is_published', 'published_at'),
             'classes': ('wide',),
+            'description': '⚠️ Recipe must be published to appear on site and be viewable via "View on site" button',
         }),
         ('Advanced', {
             'fields': ('recipe_data',),
@@ -187,3 +188,9 @@ class RecipeAdmin(admin.ModelAdmin):
             return obj.published_at.strftime('%b %d, %Y')
         return 'Not published'
     formatted_date.short_description = 'Date'
+
+    def view_on_site(self, obj):
+        """Only return URL if recipe is published"""
+        if obj.is_published:
+            return obj.get_absolute_url()
+        return None
