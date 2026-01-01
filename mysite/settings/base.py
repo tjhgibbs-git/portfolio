@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'main',
     'blog',
     'tools',  # New tools app
+    'recipes',  # Recipe book app
 ]
 
 MIDDLEWARE = [

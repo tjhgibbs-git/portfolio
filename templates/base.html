@@ -25,6 +25,7 @@
                     <li><a href="{% url 'about' %}" class="{% if 'about' in request.path %}active{% endif %}">About</a></li>
                     <li><a href="{% url 'portfolio' %}" class="{% if 'portfolio' in request.path %}active{% endif %}">Projects</a></li>
                     <li><a href="{% url 'tools:list' %}" class="{% if 'tools' in request.path %}active{% endif %}">Tools</a></li>
+                    <li><a href="{% url 'recipes:recipe_list' %}" class="{% if 'recipes' in request.path %}active{% endif %}">Recipes</a></li>
                     <li><a href="{% url 'blog' %}" class="{% if 'blog' in request.path %}active{% endif %}">Blog</a></li>
                     <li><a href="{% url 'contact' %}" class="{% if 'contact' in request.path %}active{% endif %}">Contact</a></li>
                 </ul>
@@ -62,6 +63,7 @@
                         <!-- <li><a href="{% url 'about' %}">About Me</a></li> -->
                         <li><a href="{% url 'portfolio' %}">Portfolio</a></li>
                         <li><a href="{% url 'tools:list' %}" class="{% if 'tools' in request.path %}active{% endif %}">Tools</a></li>
+                        <li><a href="{% url 'recipes:recipe_list' %}">Recipes</a></li>
                         <li><a href="{% url 'blog' %}">Blog</a></li>
                         <li><a href="{% url 'contact' %}">Contact</a></li>
                     </ul>
