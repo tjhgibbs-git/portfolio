@@ -1,21 +1,28 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from django.views.generic import ListView
+from django.db.models import Q
 from .models import Tool
 
-class ToolListView(ListView):
-    model = Tool
-    template_name = 'tools/tool_list.html'
-    context_object_name = 'tools'
-    paginate_by = 12
-    
-    def get_queryset(self):
-        return Tool.objects.filter(is_active=True).order_by('-created_at')
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['total_tools'] = Tool.objects.filter(is_active=True).count()
-        return context
+def tool_list(request):
+    """Display list of tools with search functionality"""
+    tools = Tool.objects.filter(is_active=True)
+
+    # Search functionality
+    search_query = request.GET.get('q', '')
+    if search_query:
+        tools = tools.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    # Order by most recent
+    tools = tools.order_by('-created_at')
+
+    context = {
+        'tools': tools,
+        'search_query': search_query,
+    }
+    return render(request, 'tools/tool_list.html', context)
 
 def tool_detail(request, slug):
     """Serve the tool HTML directly"""
