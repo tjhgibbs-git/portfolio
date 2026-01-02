@@ -37,18 +37,11 @@
                     {% for recipe in recipes %}
                         <li style="border-bottom: 1px solid #e0e0e0; padding: 1rem 0;">
                             <a href="{% url 'recipes:recipe_detail' recipe.slug %}"
-                               style="text-decoration: none; color: inherit; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;">
+                               style="text-decoration: none; color: inherit; display: block;">
                                 <span style="font-size: 1.1rem; font-weight: 500; color: var(--primary-color, #1a3a6c);">
                                     {{ recipe.name }}
                                 </span>
-                                <span style="font-size: 0.9rem; color: #888; white-space: nowrap;">
-                                    {% if recipe.difficulty == 'Easy' %}🟢{% elif recipe.difficulty == 'Medium' %}🟡{% else %}🔴{% endif %}
-                                    {{ recipe.difficulty }}
-                                </span>
                             </a>
-                            {% if recipe.description %}
-                                <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.95rem;">{{ recipe.description }}</p>
-                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
