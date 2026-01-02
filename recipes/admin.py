@@ -7,16 +7,16 @@ import json
 
 
 class RecipeAdminForm(forms.ModelForm):
-    """Custom form for Recipe admin with JSON paste support"""
+    """Custom form for Recipe admin with simplified JSON paste workflow"""
     json_input = forms.CharField(
-        required=False,
+        required=True,
         widget=forms.Textarea(attrs={
             'rows': 20,
             'class': 'vLargeTextField',
             'style': 'width: 95%; font-family: monospace; font-size: 14px;',
-            'placeholder': 'Paste your recipe JSON here...'
+            'placeholder': 'Paste your recipe JSON here and save - that\'s it! Fields below will auto-populate.'
         }),
-        help_text='Paste the complete recipe JSON here. It will automatically populate the fields below.'
+        help_text='Paste your complete recipe JSON here. All fields will be automatically populated. You can optionally edit them below before saving.'
     )
 
     class Meta:
@@ -25,11 +25,6 @@ class RecipeAdminForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'vLargeTextField', 'style': 'width: 95%; font-size: 18px;'}),
             'description': forms.Textarea(attrs={'rows': 3, 'class': 'vLargeTextField', 'style': 'width: 95%;'}),
-            'recipe_data': forms.Textarea(attrs={
-                'rows': 15,
-                'class': 'vLargeTextField',
-                'style': 'width: 95%; font-family: monospace; font-size: 12px;',
-            }),
         }
 
     def __init__(self, *args, **kwargs):
@@ -37,35 +32,40 @@ class RecipeAdminForm(forms.ModelForm):
         # Pre-populate json_input with existing recipe_data if editing
         if self.instance and self.instance.pk and self.instance.recipe_data:
             self.fields['json_input'].initial = json.dumps(self.instance.recipe_data, indent=2)
+        # Make json_input optional for editing existing recipes
+        if self.instance and self.instance.pk:
+            self.fields['json_input'].required = False
 
     def clean(self):
         cleaned_data = super().clean()
         json_input = cleaned_data.get('json_input')
 
-        # If JSON input is provided, parse it and set recipe_data
+        # If JSON input is provided, parse it and populate ALL fields from it
         if json_input and json_input.strip():
             try:
                 recipe_json = json.loads(json_input)
+                # Store the JSON data
                 cleaned_data['recipe_data'] = recipe_json
 
-                # Auto-populate other fields from JSON if they're empty
-                if not cleaned_data.get('name'):
-                    cleaned_data['name'] = recipe_json.get('name', '')
-                if not cleaned_data.get('description'):
-                    cleaned_data['description'] = recipe_json.get('description', '')
-                if not cleaned_data.get('prep_time'):
-                    cleaned_data['prep_time'] = recipe_json.get('prepTime', '')
-                if not cleaned_data.get('cook_time'):
-                    cleaned_data['cook_time'] = recipe_json.get('cookTime', '')
-                if not cleaned_data.get('total_time'):
-                    cleaned_data['total_time'] = recipe_json.get('totalTime', '')
-                if not cleaned_data.get('servings'):
-                    cleaned_data['servings'] = recipe_json.get('servings', '')
-                if not cleaned_data.get('difficulty') or cleaned_data.get('difficulty') == Recipe.EASY:
-                    cleaned_data['difficulty'] = recipe_json.get('difficulty', 'Easy')
+                # Always auto-populate all fields from JSON (override existing values)
+                cleaned_data['name'] = recipe_json.get('name', '')
+                cleaned_data['description'] = recipe_json.get('description', '')
+                cleaned_data['prep_time'] = recipe_json.get('prepTime', '')
+                cleaned_data['cook_time'] = recipe_json.get('cookTime', '')
+                cleaned_data['total_time'] = recipe_json.get('totalTime', '')
+                cleaned_data['servings'] = recipe_json.get('servings', '')
+                cleaned_data['difficulty'] = recipe_json.get('difficulty', 'Easy')
+
+                # Auto-generate slug from name if not provided
+                if not cleaned_data.get('slug'):
+                    from django.utils.text import slugify
+                    cleaned_data['slug'] = slugify(cleaned_data['name'])
 
             except json.JSONDecodeError as e:
                 raise forms.ValidationError(f'Invalid JSON format: {e}')
+        elif not self.instance.pk:
+            # For new recipes, JSON is required
+            raise forms.ValidationError('Please paste recipe JSON to create a new recipe.')
 
         return cleaned_data
 
@@ -120,28 +120,24 @@ class RecipeAdmin(admin.ModelAdmin):
     actions_on_bottom = True
 
     fieldsets = (
-        (None, {
+        ('📝 Step 1: Paste Recipe JSON', {
             'fields': ('json_input',),
             'classes': ('wide',),
-            'description': '⬇️ Paste your recipe JSON here first (recommended)',
+            'description': '✨ Paste your recipe JSON here and save. All fields below will auto-populate. That\'s it!',
         }),
-        ('Recipe Details', {
+        ('✏️ Step 2 (Optional): Review & Edit Auto-Populated Fields', {
             'fields': ('name', 'slug', 'description'),
             'classes': ('wide',),
+            'description': 'These fields are automatically filled from your JSON. Edit if needed.',
         }),
-        ('Recipe Metadata', {
+        ('⏱️ Recipe Info (Auto-Populated)', {
             'fields': ('prep_time', 'cook_time', 'total_time', 'servings', 'difficulty'),
             'classes': ('wide',),
         }),
-        ('Publishing', {
+        ('🚀 Publishing (Published by Default)', {
             'fields': ('is_published', 'published_at'),
             'classes': ('wide',),
-            'description': '⚠️ Recipe must be published to appear on site and be viewable via "View on site" button',
-        }),
-        ('Advanced', {
-            'fields': ('recipe_data',),
-            'classes': ('collapse',),
-            'description': 'Raw JSON data (auto-populated from JSON input above)',
+            'description': 'New recipes are published by default. Uncheck to save as draft.',
         }),
     )
 
