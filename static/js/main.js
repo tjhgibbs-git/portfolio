@@ -2,12 +2,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     const menuToggle = document.querySelector('.mobile-toggle');
     const navMenu = document.getElementById('nav-menu');
-    
+
     if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', function() {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
             navMenu.classList.toggle('active');
         });
-        
+
+        // Close menu when clicking a nav link
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                navMenu.classList.remove('active');
+            });
+        });
+
         // Close menu when clicking outside
         document.addEventListener('click', function(event) {
             if (!event.target.closest('nav') && !event.target.closest('.mobile-toggle') && navMenu.classList.contains('active')) {
