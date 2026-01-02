@@ -77,7 +77,7 @@
         padding: 0.8rem 0;
         border-bottom: 1px solid #e0e0e0;
         font-size: 1.05rem;
-        line-height: 1.6;
+        line-height: 1.5;
     }
 
     .ingredients-list li:last-child {
@@ -100,7 +100,7 @@
     .ingredient-notes {
         color: #666;
         font-style: italic;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
 
     /* Instructions List */
@@ -181,6 +181,28 @@
             gap: 1rem;
         }
 
+        .ingredients-list {
+            padding: 1rem;
+        }
+
+        .ingredients-list li {
+            padding: 0.6rem 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .ingredient-amount {
+            min-width: 50px;
+            font-size: 0.9rem;
+        }
+
+        .ingredient-notes {
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 0.2rem;
+            margin-left: 50px;
+        }
+
         .instructions-list li {
             padding-left: 3.5rem;
         }
@@ -237,10 +259,7 @@
             {% if recipe.difficulty %}
                 <div class="meta-item">
                     <span class="meta-label">Difficulty:</span>
-                    <span>
-                        {% if recipe.difficulty == 'Easy' %}🟢{% elif recipe.difficulty == 'Medium' %}🟡{% else %}🔴{% endif %}
-                        {{ recipe.difficulty }}
-                    </span>
+                    <span>{{ recipe.difficulty }}</span>
                 </div>
             {% endif %}
         </div>

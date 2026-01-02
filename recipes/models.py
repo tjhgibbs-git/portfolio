@@ -32,7 +32,7 @@ class Recipe(models.Model):
     recipe_data = models.JSONField(help_text="Full recipe JSON data")
 
     # Publishing
-    is_published = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(null=True, blank=True)
