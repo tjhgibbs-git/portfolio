@@ -94,18 +94,5 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', animateElements);
     window.addEventListener('scroll', animateElements);
     
-    // Simple page transition effect
-    const fadeIn = () => {
-        const main = document.querySelector('main');
-        if (main) {
-            main.style.opacity = '0';
-            main.style.transition = 'opacity 0.5s ease';
-            
-            setTimeout(() => {
-                main.style.opacity = '1';
-            }, 50);
-        }
-    };
-    
-    fadeIn();
+    // Removed fadeIn effect on main element to prevent stacking context issues with header
 });
