@@ -219,6 +219,7 @@ pre code {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    z-index: 1; /* Ensure posts render below mobile navigation menu (z-index: 999) */
 }
 
 .post:hover {
