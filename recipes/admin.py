@@ -77,8 +77,8 @@ class PublishStatusFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('published', '✅ Published'),
-            ('draft', '📋 Draft'),
+            ('published', 'Published'),
+            ('draft', 'Draft'),
         )
 
     def queryset(self, request, queryset):
@@ -96,9 +96,9 @@ class DifficultyFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('Easy', '🟢 Easy'),
-            ('Medium', '🟡 Medium'),
-            ('Hard', '🔴 Hard'),
+            ('Easy', 'Easy'),
+            ('Medium', 'Medium'),
+            ('Hard', 'Hard'),
         )
 
     def queryset(self, request, queryset):
@@ -120,21 +120,21 @@ class RecipeAdmin(admin.ModelAdmin):
     actions_on_bottom = True
 
     fieldsets = (
-        ('📝 Step 1: Paste Recipe JSON', {
+        ('Step 1: Paste Recipe JSON', {
             'fields': ('json_input',),
             'classes': ('wide',),
-            'description': '✨ Paste your recipe JSON here and save. All fields below will auto-populate. That\'s it!',
+            'description': 'Paste your recipe JSON here and save. All fields below will auto-populate. That\'s it!',
         }),
-        ('✏️ Step 2 (Optional): Review & Edit Auto-Populated Fields', {
+        ('Step 2 (Optional): Review & Edit Auto-Populated Fields', {
             'fields': ('name', 'slug', 'description'),
             'classes': ('wide',),
             'description': 'These fields are automatically filled from your JSON. Edit if needed.',
         }),
-        ('⏱️ Recipe Info (Auto-Populated)', {
+        ('Recipe Info (Auto-Populated)', {
             'fields': ('prep_time', 'cook_time', 'total_time', 'servings', 'difficulty'),
             'classes': ('wide',),
         }),
-        ('🚀 Publishing (Published by Default)', {
+        ('Publishing (Published by Default)', {
             'fields': ('is_published', 'published_at'),
             'classes': ('wide',),
             'description': 'New recipes are published by default. Uncheck to save as draft.',
@@ -161,21 +161,24 @@ class RecipeAdmin(admin.ModelAdmin):
     colored_name.short_description = 'Recipe Name'
 
     def difficulty_display(self, obj):
-        """Display difficulty with an icon"""
-        icons = {
-            'Easy': '🟢',
-            'Medium': '🟡',
-            'Hard': '🔴',
+        """Display difficulty with color"""
+        colors = {
+            'Easy': '#4CAF50',    # Green
+            'Medium': '#FF9800',  # Orange
+            'Hard': '#F44336',    # Red
         }
-        icon = icons.get(obj.difficulty, '⚪')
-        return format_html('{} {}', icon, obj.difficulty)
+        color = colors.get(obj.difficulty, '#2f2d2e')
+        return format_html(
+            '<span style="color: {}; font-weight: 600;">{}</span>',
+            color, obj.difficulty
+        )
     difficulty_display.short_description = 'Difficulty'
 
     def status_display(self, obj):
-        """Display published status with an icon and color"""
+        """Display published status with color"""
         if obj.is_published:
-            return format_html('<span style="color:#4CAF50;">✅ Published</span>')
-        return format_html('<span style="color:#FF5722;">📋 Draft</span>')
+            return format_html('<span style="color:#4CAF50; font-weight: 600;">Published</span>')
+        return format_html('<span style="color:#FF5722; font-weight: 600;">Draft</span>')
     status_display.short_description = 'Status'
 
     def formatted_date(self, obj):

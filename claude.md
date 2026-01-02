@@ -50,10 +50,15 @@ This document contains important guidelines and conventions for working on this 
 
 ## Code Style
 
+### No Emojis
+- Do NOT use emojis in code, admin interfaces, UI text, or commit messages unless explicitly requested
+- Keep interfaces clean and professional
+- Use color coding or text styling instead of emojis for visual distinction
+
 ### Commit Messages
 - Clear, descriptive first line
 - Detailed explanation in body
-- Include "🤖 Generated with Claude Code" footer
+- Include "Generated with Claude Code" footer
 - Include Co-Authored-By line
 
 ### Development Workflow
