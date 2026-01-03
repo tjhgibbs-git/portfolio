@@ -2,7 +2,8 @@
 
 .contact-section {
     padding: 8rem 0 6rem;
-    background-color: var(--light-color);
+    background-color: var(--bg-secondary);
+    transition: background 0.3s ease;
 }
 
 .contact-container {
@@ -13,17 +14,18 @@
 }
 
 .contact-card {
-    background: white;
-    border-radius: 10px;
+    background: var(--card-bg);
+    border-radius: 8px;
     padding: 2.5rem 2rem;
     box-shadow: var(--card-shadow);
     text-align: center;
-    transition: var(--transition);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 .contact-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .contact-icon {

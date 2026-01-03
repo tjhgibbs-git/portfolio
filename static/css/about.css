@@ -2,8 +2,9 @@
 
 .about-hero {
     padding: 8rem 0 4rem;
-    background: var(--light-color);
+    background: var(--bg-primary);
     text-align: center;
+    transition: background 0.3s ease;
 }
 
 .about-intro {
@@ -11,7 +12,7 @@
     margin: 2rem auto;
     font-size: 1.2rem;
     line-height: 1.8;
-    color: var(--dark-color);
+    color: var(--text-primary);
 }
 
 .about-section {
@@ -19,24 +20,14 @@
 }
 
 .about-section:nth-child(even) {
-    background-color: var(--light-color);
+    background-color: var(--bg-secondary);
+    transition: background 0.3s ease;
 }
 
 .subsection-title {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-}
-
-.subsection-title:after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -10px;
-    width: 50px;
-    height: 3px;
-    background-color: var(--secondary-color);
+    color: var(--text-primary);
 }
 
 /* Timeline styling */
@@ -54,7 +45,7 @@
     top: 0;
     height: 100%;
     width: 3px;
-    background: var(--gradient-bg);
+    background: var(--secondary-color);
     border-radius: 2px;
 }
 
@@ -76,8 +67,8 @@
     height: 15px;
     border-radius: 50%;
     background-color: var(--accent-color);
-    border: 3px solid var(--light-color);
-    box-shadow: 0 0 0 3px rgba(244, 96, 54, 0.2);
+    border: 3px solid var(--bg-secondary);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
 }
 
 .timeline-date {
@@ -104,16 +95,17 @@
 }
 
 .interest-card {
-    background: white;
-    border-radius: 10px;
+    background: var(--card-bg);
+    border-radius: 8px;
     overflow: hidden;
     box-shadow: var(--card-shadow);
-    transition: var(--transition);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 .interest-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .interest-image {
@@ -161,7 +153,7 @@
 }
 
 .interest-content p {
-    color: var(--dark-color);
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
@@ -183,10 +175,12 @@
 
 .skill-group {
     flex: 1 1 300px;
-    background: white;
+    background: var(--card-bg);
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    transition: background 0.3s ease;
 }
 
 .skill-group h3 {
