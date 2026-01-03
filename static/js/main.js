@@ -1,4 +1,62 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Dark mode functionality
+    const initTheme = () => {
+        // Check for saved theme preference or default to system preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+
+        updateThemeToggle();
+    };
+
+    const updateThemeToggle = () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const icon = themeToggle.querySelector('.theme-icon');
+            const text = themeToggle.querySelector('.theme-text');
+
+            if (currentTheme === 'dark') {
+                icon.textContent = '☀️';
+                text.textContent = 'Light Mode';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = 'Dark Mode';
+            }
+        }
+    };
+
+    const toggleTheme = () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeToggle();
+    };
+
+    // Initialize theme on page load
+    initTheme();
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            updateThemeToggle();
+        }
+    });
+
+    // Add theme toggle event listener
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+
     // Mobile menu toggle
     const menuToggle = document.querySelector('.mobile-toggle');
     const navMenu = document.getElementById('nav-menu');

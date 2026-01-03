@@ -1,29 +1,10 @@
 /* static/css/blog.css */
-/* Color scheme and variables */
+/* Blog-specific variables */
 :root {
-    --primary-color: #1a3a6c;
-    --primary-light: #2c4e86;
-    --primary-dark: #102548;
-    --secondary-color: #0e9aa7;
-    --secondary-light: #11b5c4;
-    --secondary-dark: #0b7983;
-    --accent-color: #f46036;
-    --accent-light: #f67e5c;
-    --accent-dark: #d64927;
-    --highlight-color: #ffde22;
-    --highlight-light: #ffe54c;
-    --highlight-dark: #e6c71f;
-    --dark-color: #2f2d2e;
-    --light-color: #f8f9fa;
-    --border-color: #e2e8f0;
     --light-gray: #f1f5f9;
     --gray: #718096;
-    --gradient-bg: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    --gradient-accent: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
-    --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-    --transition: all 0.25s ease;
-    
+    --hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
     /* Typography */
     --font-main: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-heading: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -32,13 +13,15 @@
     --line-height: 1.6;
 }
 
+[data-theme="dark"] {
+    --light-gray: #3a3a3a;
+    --gray: #a0a0a0;
+}
+
 /* Base blog styles */
 body {
-    background-color: var(--light-color);
-    background-image: 
-        radial-gradient(circle at 25% 15%, rgba(14, 154, 167, 0.03) 0%, transparent 25%),
-        radial-gradient(circle at 75% 85%, rgba(244, 96, 54, 0.03) 0%, transparent 25%);
-    background-attachment: fixed;
+    background-color: var(--bg-secondary);
+    transition: background-color 0.3s ease;
 }
 
 /* Typography */
@@ -73,11 +56,12 @@ blockquote {
     border-left: 4px solid var(--secondary-color);
     padding: 1.2rem 1.5rem;
     margin: 1.5rem 0;
-    background-color: var(--light-gray);
+    background-color: var(--bg-tertiary);
     border-radius: 0 8px 8px 0;
     position: relative;
-    color: var(--dark-color);
+    color: var(--text-primary);
     font-style: italic;
+    transition: background-color 0.3s ease;
 }
 
 blockquote::before {
@@ -86,29 +70,33 @@ blockquote::before {
     top: 10px;
     left: 10px;
     font-size: 3rem;
-    color: rgba(14, 154, 167, 0.1);
+    color: var(--secondary-color);
+    opacity: 0.1;
     font-family: Georgia, serif;
 }
 
 code {
     font-family: var(--font-mono);
-    background: var(--light-gray);
+    background: var(--bg-tertiary);
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
     font-size: 0.9em;
-    color: var(--primary-dark);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease;
 }
 
 pre {
     font-family: var(--font-mono);
-    background: var(--dark-color);
-    color: #f8f8f2;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
     padding: 1.2rem;
     border-radius: 8px;
     overflow-x: auto;
     margin: 1.5rem 0;
     box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease;
 }
 
 pre code {
@@ -213,13 +201,14 @@ pre code {
 .post {
     padding: 2rem;
     margin-bottom: 2rem;
-    border-radius: 12px;
-    background: white; /* Changed from blue background to white */
+    border-radius: 8px;
+    background: var(--card-bg);
     box-shadow: var(--card-shadow);
-    transition: var(--transition);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     position: relative;
     overflow: hidden;
     z-index: 1; /* Ensure posts render below mobile navigation menu (z-index: 999) */
+    border: 1px solid var(--border-color);
 }
 
 .post:hover {
@@ -287,9 +276,9 @@ pre code {
 
 .post-title-link {
     text-decoration: none;
-    color: var(--dark-color);
-    transition: var(--transition);
-    background-image: linear-gradient(transparent calc(100% - 3px), var(--secondary-light) 3px);
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+    background-image: linear-gradient(transparent calc(100% - 3px), var(--secondary-color) 3px);
     background-size: 0 100%;
     background-repeat: no-repeat;
     display: inline;
@@ -297,7 +286,7 @@ pre code {
 }
 
 .post-title-link:hover {
-    color: var(--primary-dark);
+    color: var(--secondary-color);
     background-size: 100% 100%;
 }
 
@@ -367,7 +356,7 @@ pre code {
 
 /* Note post styles */
 .post-note {
-    background: white;
+    background: var(--card-bg);
 }
 
 .post-note .post-title {
@@ -515,7 +504,7 @@ ol li {
 
 .related-posts h3 {
     margin-bottom: 1.5rem;
-    color: var(--dark-color);
+    color: var(--text-primary);
 }
 
 .related-posts-grid {
@@ -525,11 +514,12 @@ ol li {
 }
 
 .related-post {
-    background: white;
+    background: var(--card-bg);
     border-radius: 8px;
     box-shadow: var(--card-shadow);
-    transition: var(--transition);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
 .related-post:hover {
@@ -541,7 +531,7 @@ ol li {
     display: block;
     padding: 1.2rem;
     height: 100%;
-    color: var(--dark-color);
+    color: var(--text-primary);
     text-decoration: none;
 }
 
@@ -562,11 +552,13 @@ ol li {
 
 /* Sidebar styles */
 .sidebar-section {
-    background: white;
-    border-radius: 12px;
+    background: var(--card-bg);
+    border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 2rem;
     box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    transition: background 0.3s ease;
 }
 
 .sidebar-title {
@@ -620,7 +612,9 @@ ol li {
     border-radius: 8px;
     font-size: 0.95rem;
     outline: none;
-    transition: var(--transition);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .search-input:focus {
@@ -641,9 +635,10 @@ ol li {
 .no-posts {
     padding: 2rem;
     text-align: center;
-    background: white;
-    border-radius: 12px;
+    background: var(--card-bg);
+    border-radius: 8px;
     box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
 }
 
 /* Fix for image margins to ensure equal spacing on both sides */

@@ -5,6 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Thomas Gibbs | Data Professional{% endblock %}</title>
+    <script>
+        // Prevent flash of unstyled content by setting theme before page render
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -49,6 +61,13 @@
                         </a>
                     </div>
                 </div>
+            </div>
+
+            <div class="theme-toggle">
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-text">Dark Mode</span>
+                </button>
             </div>
 
             <div class="copyright">
