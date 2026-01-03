@@ -163,8 +163,6 @@ python manage.py runserver 0.0.0.0:8000
 - `static/css/main.css` - Core color variables and dark mode
 - `static/js/main.js` - Theme detection and toggle logic
 - `templates/base.html` - Toggle button and FOUC prevention
-- `static/css/about.css` - About page dark mode
-- `static/css/contact.css` - Contact page dark mode
 - `static/css/blog.css` - Blog page dark mode
 
 ### Color Palette
