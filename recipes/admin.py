@@ -30,11 +30,15 @@ class RecipeAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Pre-populate json_input with existing recipe_data if editing
-        if self.instance and self.instance.pk and self.instance.recipe_data:
+        if self.instance and self.instance.pk and hasattr(self.instance, 'recipe_data') and self.instance.recipe_data:
             self.fields['json_input'].initial = json.dumps(self.instance.recipe_data, indent=2)
         # Make json_input optional for editing existing recipes
         if self.instance and self.instance.pk:
             self.fields['json_input'].required = False
+
+        # Make form fields optional - they'll be populated from JSON in clean()
+        self.fields['name'].required = False
+        self.fields['recipe_data'].required = False
 
     def clean(self):
         cleaned_data = super().clean()
