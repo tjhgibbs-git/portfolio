@@ -37,8 +37,11 @@ class RecipeAdminForm(forms.ModelForm):
             self.fields['json_input'].required = False
 
         # Make form fields optional - they'll be populated from JSON in clean()
-        self.fields['name'].required = False
-        self.fields['recipe_data'].required = False
+        # Only modify fields if they exist in the form
+        if 'name' in self.fields:
+            self.fields['name'].required = False
+        if 'recipe_data' in self.fields:
+            self.fields['recipe_data'].required = False
 
     def clean(self):
         cleaned_data = super().clean()
