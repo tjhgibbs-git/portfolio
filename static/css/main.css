@@ -47,7 +47,7 @@ body {
     color: var(--text-primary);
     background-color: var(--bg-secondary);
     overflow-x: hidden;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Removed transition to prevent dark mode fade-in on page load */
 }
 
 /* Typography */
