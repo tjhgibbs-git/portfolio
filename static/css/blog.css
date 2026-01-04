@@ -19,10 +19,8 @@
 }
 
 /* Base blog styles */
-body {
-    background-color: var(--bg-secondary);
-    transition: background-color 0.3s ease;
-}
+/* Removed body background override to prevent dark mode fade-in on page load */
+/* main.css handles the body background and transitions */
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
@@ -154,7 +152,8 @@ pre code {
 }
 
 /* Main layout */
-.container {
+/* Only apply blog-specific container styles to containers within main, not header */
+main .container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 1.5rem;
