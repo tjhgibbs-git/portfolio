@@ -77,6 +77,19 @@ class RecipeAdminForm(forms.ModelForm):
 
         return cleaned_data
 
+    def save(self, commit=True):
+        """Override save to ensure recipe_data is properly set from cleaned_data"""
+        instance = super().save(commit=False)
+
+        # Explicitly set recipe_data from cleaned_data if it was populated
+        if 'recipe_data' in self.cleaned_data:
+            instance.recipe_data = self.cleaned_data['recipe_data']
+
+        if commit:
+            instance.save()
+
+        return instance
+
 
 class PublishStatusFilter(admin.SimpleListFilter):
     """Filter recipes by publish status"""
