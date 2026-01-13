@@ -1,10 +1,29 @@
 /* static/css/blog.css */
-/* Blog-specific variables */
+/* Color scheme and variables */
 :root {
+    --primary-color: #1a3a6c;
+    --primary-light: #2c4e86;
+    --primary-dark: #102548;
+    --secondary-color: #0e9aa7;
+    --secondary-light: #11b5c4;
+    --secondary-dark: #0b7983;
+    --accent-color: #f46036;
+    --accent-light: #f67e5c;
+    --accent-dark: #d64927;
+    --highlight-color: #ffde22;
+    --highlight-light: #ffe54c;
+    --highlight-dark: #e6c71f;
+    --dark-color: #2f2d2e;
+    --light-color: #f8f9fa;
+    --border-color: #e2e8f0;
     --light-gray: #f1f5f9;
     --gray: #718096;
-    --hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
+    --gradient-bg: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    --gradient-accent: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+    --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    --transition: all 0.25s ease;
+    
     /* Typography */
     --font-main: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-heading: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -13,36 +32,36 @@
     --line-height: 1.6;
 }
 
-[data-theme="dark"] {
-    --light-gray: #3a3a3a;
-    --gray: #a0a0a0;
+/* Base blog styles */
+body {
+    background-color: var(--light-color);
+    background-image: 
+        radial-gradient(circle at 25% 15%, rgba(14, 154, 167, 0.03) 0%, transparent 25%),
+        radial-gradient(circle at 75% 85%, rgba(244, 96, 54, 0.03) 0%, transparent 25%);
+    background-attachment: fixed;
 }
 
-/* Base blog styles */
-/* Removed body background override to prevent dark mode fade-in on page load */
-/* main.css handles the body background and transitions */
-
-/* Typography - scoped to main content to avoid affecting header */
-main h1, main h2, main h3, main h4, main h5, main h6 {
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
     margin: 0 0 0.5em 0;
     line-height: 1.3;
     font-weight: 600;
     font-family: var(--font-heading);
 }
 
-main h1 {
+h1 {
     font-size: 2.2rem;
 }
 
-main h2 {
+h2 {
     font-size: 1.8rem;
 }
 
-main h3 {
+h3 {
     font-size: 1.4rem;
 }
 
-main h4 {
+h4 {
     font-size: 1.2rem;
 }
 
@@ -54,12 +73,11 @@ blockquote {
     border-left: 4px solid var(--secondary-color);
     padding: 1.2rem 1.5rem;
     margin: 1.5rem 0;
-    background-color: var(--bg-tertiary);
+    background-color: var(--light-gray);
     border-radius: 0 8px 8px 0;
     position: relative;
-    color: var(--text-primary);
+    color: var(--dark-color);
     font-style: italic;
-    transition: background-color 0.3s ease;
 }
 
 blockquote::before {
@@ -68,33 +86,29 @@ blockquote::before {
     top: 10px;
     left: 10px;
     font-size: 3rem;
-    color: var(--secondary-color);
-    opacity: 0.1;
+    color: rgba(14, 154, 167, 0.1);
     font-family: Georgia, serif;
 }
 
 code {
     font-family: var(--font-mono);
-    background: var(--bg-tertiary);
+    background: var(--light-gray);
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
     font-size: 0.9em;
-    color: var(--secondary-color);
-    border: 1px solid var(--border-color);
-    transition: background-color 0.3s ease;
+    color: var(--primary-dark);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 pre {
     font-family: var(--font-mono);
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
+    background: var(--dark-color);
+    color: #f8f8f2;
     padding: 1.2rem;
     border-radius: 8px;
     overflow-x: auto;
     margin: 1.5rem 0;
     box-shadow: var(--card-shadow);
-    border: 1px solid var(--border-color);
-    transition: background-color 0.3s ease;
 }
 
 pre code {
@@ -152,8 +166,7 @@ pre code {
 }
 
 /* Main layout */
-/* Only apply blog-specific container styles to containers within main, not header */
-main .container {
+.container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 1.5rem;
@@ -202,14 +215,12 @@ main .container {
 .post {
     padding: 2rem;
     margin-bottom: 2rem;
-    border-radius: 8px;
-    background: var(--card-bg);
+    border-radius: 12px;
+    background: white; /* Changed from blue background to white */
     box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    transition: var(--transition);
     position: relative;
     overflow: hidden;
-    z-index: 1; /* Ensure posts render below mobile navigation menu (z-index: 999) */
-    border: 1px solid var(--border-color);
 }
 
 .post:hover {
@@ -277,9 +288,9 @@ main .container {
 
 .post-title-link {
     text-decoration: none;
-    color: var(--text-primary);
-    transition: color 0.3s ease;
-    background-image: linear-gradient(transparent calc(100% - 3px), var(--secondary-color) 3px);
+    color: var(--dark-color);
+    transition: var(--transition);
+    background-image: linear-gradient(transparent calc(100% - 3px), var(--secondary-light) 3px);
     background-size: 0 100%;
     background-repeat: no-repeat;
     display: inline;
@@ -287,7 +298,7 @@ main .container {
 }
 
 .post-title-link:hover {
-    color: var(--secondary-color);
+    color: var(--primary-dark);
     background-size: 100% 100%;
 }
 
@@ -357,7 +368,7 @@ main .container {
 
 /* Note post styles */
 .post-note {
-    background: var(--card-bg);
+    background: white;
 }
 
 .post-note .post-title {
@@ -505,7 +516,7 @@ ol li {
 
 .related-posts h3 {
     margin-bottom: 1.5rem;
-    color: var(--text-primary);
+    color: var(--dark-color);
 }
 
 .related-posts-grid {
@@ -515,12 +526,11 @@ ol li {
 }
 
 .related-post {
-    background: var(--card-bg);
+    background: white;
     border-radius: 8px;
     box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    transition: var(--transition);
     overflow: hidden;
-    border: 1px solid var(--border-color);
 }
 
 .related-post:hover {
@@ -532,7 +542,7 @@ ol li {
     display: block;
     padding: 1.2rem;
     height: 100%;
-    color: var(--text-primary);
+    color: var(--dark-color);
     text-decoration: none;
 }
 
@@ -553,13 +563,11 @@ ol li {
 
 /* Sidebar styles */
 .sidebar-section {
-    background: var(--card-bg);
-    border-radius: 8px;
+    background: white;
+    border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
     box-shadow: var(--card-shadow);
-    border: 1px solid var(--border-color);
-    transition: background 0.3s ease;
 }
 
 .sidebar-title {
@@ -613,9 +621,7 @@ ol li {
     border-radius: 8px;
     font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background: var(--bg-primary);
-    color: var(--text-primary);
+    transition: var(--transition);
 }
 
 .search-input:focus {
@@ -636,10 +642,9 @@ ol li {
 .no-posts {
     padding: 2rem;
     text-align: center;
-    background: var(--card-bg);
-    border-radius: 8px;
+    background: white;
+    border-radius: 12px;
     box-shadow: var(--card-shadow);
-    border: 1px solid var(--border-color);
 }
 
 /* Fix for image margins to ensure equal spacing on both sides */
