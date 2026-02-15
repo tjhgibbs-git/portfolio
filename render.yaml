@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: portfolio
+    runtime: python
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn mysite.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: mysite.settings.render
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.11
