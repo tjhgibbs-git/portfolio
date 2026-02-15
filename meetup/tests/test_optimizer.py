@@ -114,14 +114,15 @@ class OptimizerTest(TestCase):
             },
         ]
         results = calculate_meetup_spots(people)
-        # Collect all unique top stations across modes
-        top_stations = set()
+        # Collect all unique station sets across modes (not just #1)
+        mode_station_sets = {}
         for mode in ['fairness', 'efficiency', 'quick_arrival', 'easy_home']:
-            if results[mode]:
-                top_stations.add(results[mode][0]['station_name'])
-        # We should see at least some variety (not all the same)
-        # This isn't guaranteed but is likely with this spread
-        self.assertGreaterEqual(len(top_stations), 1)
+            mode_station_sets[mode] = [r['station_name'] for r in results[mode]]
+        # At least two modes should have different top-5 orderings
+        orderings = set(tuple(v) for v in mode_station_sets.values())
+        self.assertGreaterEqual(len(orderings), 2,
+                                "Expected at least two distinct station orderings "
+                                "across scoring modes")
 
     def test_google_maps_url_format(self):
         """Google Maps URLs should be properly formatted."""
@@ -141,6 +142,67 @@ class OptimizerTest(TestCase):
         for r in results.get('fairness', []):
             self.assertTrue(
                 r['google_maps_url'].startswith('https://www.google.com/maps/'))
+
+    def test_results_sorted_by_score(self):
+        """Each mode's results should be sorted ascending by score."""
+        people = [
+            {
+                'name': 'Alice',
+                'origin_lat': 51.5155, 'origin_lon': -0.0715,
+                'home_lat': 51.5322, 'home_lon': -0.1058,
+            },
+            {
+                'name': 'Bob',
+                'origin_lat': 51.4627, 'origin_lon': -0.1145,
+                'home_lat': 51.4694, 'home_lon': -0.0693,
+            },
+        ]
+        results = calculate_meetup_spots(people)
+        for mode in ['fairness', 'efficiency', 'quick_arrival', 'easy_home']:
+            scores = [r['score'] for r in results[mode]]
+            self.assertEqual(scores, sorted(scores),
+                             f"{mode} results not sorted by score")
+
+    def test_results_include_all_four_scores(self):
+        """Each result should include all 4 score values for DB persistence."""
+        people = [
+            {
+                'name': 'Alice',
+                'origin_lat': 51.5155, 'origin_lon': -0.0715,
+                'home_lat': 51.5322, 'home_lon': -0.1058,
+            },
+            {
+                'name': 'Bob',
+                'origin_lat': 51.4627, 'origin_lon': -0.1145,
+                'home_lat': 51.4694, 'home_lon': -0.0693,
+            },
+        ]
+        results = calculate_meetup_spots(people)
+        for mode in ['fairness', 'efficiency', 'quick_arrival', 'easy_home']:
+            for r in results[mode]:
+                self.assertIn('score_fairness', r)
+                self.assertIn('score_efficiency', r)
+                self.assertIn('score_quick_arrival', r)
+                self.assertIn('score_easy_home', r)
+
+    def test_same_origin_and_home(self):
+        """People whose home is the same as their origin should still work."""
+        people = [
+            {
+                'name': 'Alice',
+                'origin_lat': 51.5155, 'origin_lon': -0.0715,
+                'home_lat': 51.5155, 'home_lon': -0.0715,
+            },
+            {
+                'name': 'Bob',
+                'origin_lat': 51.4627, 'origin_lon': -0.1145,
+                'home_lat': 51.4627, 'home_lon': -0.1145,
+            },
+        ]
+        results = calculate_meetup_spots(people)
+        self.assertNotIn('error', results)
+        for mode in ['fairness', 'efficiency', 'quick_arrival', 'easy_home']:
+            self.assertGreater(len(results[mode]), 0)
 
     def test_outbound_details_per_person(self):
         """Each result should have outbound details for each person."""
