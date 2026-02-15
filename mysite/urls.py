@@ -11,6 +11,7 @@ urlpatterns = [
     path('projects/<slug:slug>/', main_views.project_detail, name='project_detail'),
     path('tools/', include('tools.urls')),
     path('recipes/', include('recipes.urls')),
+    path('meetup/', include('meetup.urls')),
     path('', include('blog.urls')),
 ]
 

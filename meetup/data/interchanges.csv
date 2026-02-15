@@ -1,0 +1,230 @@
+station_name,from_line,to_line,transfer_time_minutes
+Baker Street,Bakerloo,Circle,3
+Baker Street,Bakerloo,Hammersmith & City,3
+Baker Street,Bakerloo,Jubilee,3
+Baker Street,Bakerloo,Metropolitan,3
+Baker Street,Circle,Hammersmith & City,1
+Baker Street,Circle,Jubilee,3
+Baker Street,Circle,Metropolitan,1
+Baker Street,Hammersmith & City,Jubilee,3
+Baker Street,Hammersmith & City,Metropolitan,1
+Baker Street,Jubilee,Metropolitan,3
+Bank,Central,Northern,5
+Bank,Central,Waterloo & City,5
+Bank,Central,DLR,6
+Bank,Northern,Waterloo & City,5
+Bank,Northern,DLR,6
+Bank,Waterloo & City,DLR,5
+Bank,Central,District,7
+Bank,Central,Circle,7
+Bank,Northern,District,7
+Bank,Northern,Circle,7
+Bank,DLR,District,7
+Bank,DLR,Circle,7
+Bond Street,Central,Jubilee,3
+Bond Street,Central,Elizabeth,5
+Bond Street,Jubilee,Elizabeth,4
+Canary Wharf,Jubilee,Elizabeth,5
+Charing Cross,Bakerloo,Northern,3
+Clapham Junction,Overground,Overground,4
+Earl's Court,District,Piccadilly,4
+Earl's Court,District,District,3
+Edgware Road (Bakerloo),Bakerloo,Circle,6
+Edgware Road (Bakerloo),Bakerloo,Hammersmith & City,6
+Edgware Road (Circle),Circle,Hammersmith & City,1
+Elephant & Castle,Bakerloo,Northern,4
+Embankment,Bakerloo,Circle,3
+Embankment,Bakerloo,District,3
+Embankment,Bakerloo,Northern,3
+Embankment,Circle,District,1
+Embankment,Circle,Northern,3
+Embankment,District,Northern,3
+Euston,Northern,Victoria,4
+Euston Square,Circle,Hammersmith & City,1
+Euston Square,Circle,Metropolitan,1
+Euston Square,Hammersmith & City,Metropolitan,1
+Farringdon,Circle,Hammersmith & City,1
+Farringdon,Circle,Metropolitan,1
+Farringdon,Circle,Elizabeth,4
+Farringdon,Hammersmith & City,Metropolitan,1
+Farringdon,Hammersmith & City,Elizabeth,4
+Farringdon,Metropolitan,Elizabeth,4
+Finchley Road,Jubilee,Metropolitan,3
+Finsbury Park,Piccadilly,Victoria,4
+Gloucester Road,Circle,District,2
+Gloucester Road,Circle,Piccadilly,3
+Gloucester Road,District,Piccadilly,3
+Great Portland Street,Circle,Hammersmith & City,1
+Great Portland Street,Circle,Metropolitan,1
+Great Portland Street,Hammersmith & City,Metropolitan,1
+Green Park,Jubilee,Piccadilly,4
+Green Park,Jubilee,Victoria,4
+Green Park,Piccadilly,Victoria,4
+Hammersmith,Circle,District,3
+Hammersmith,Circle,Hammersmith & City,1
+Hammersmith,Circle,Piccadilly,4
+Hammersmith,District,Hammersmith & City,3
+Hammersmith,District,Piccadilly,4
+Hammersmith,Hammersmith & City,Piccadilly,4
+Highbury & Islington,Victoria,Overground,4
+Holborn,Central,Piccadilly,4
+Kennington,Northern,Northern,3
+King's Cross St. Pancras,Circle,Hammersmith & City,1
+King's Cross St. Pancras,Circle,Metropolitan,1
+King's Cross St. Pancras,Circle,Northern,5
+King's Cross St. Pancras,Circle,Piccadilly,5
+King's Cross St. Pancras,Circle,Victoria,5
+King's Cross St. Pancras,Hammersmith & City,Metropolitan,1
+King's Cross St. Pancras,Hammersmith & City,Northern,5
+King's Cross St. Pancras,Hammersmith & City,Piccadilly,5
+King's Cross St. Pancras,Hammersmith & City,Victoria,5
+King's Cross St. Pancras,Metropolitan,Northern,5
+King's Cross St. Pancras,Metropolitan,Piccadilly,5
+King's Cross St. Pancras,Metropolitan,Victoria,5
+King's Cross St. Pancras,Northern,Piccadilly,4
+King's Cross St. Pancras,Northern,Victoria,4
+King's Cross St. Pancras,Piccadilly,Victoria,4
+Leicester Square,Northern,Piccadilly,3
+Liverpool Street,Central,Circle,4
+Liverpool Street,Central,Hammersmith & City,4
+Liverpool Street,Central,Metropolitan,4
+Liverpool Street,Central,Elizabeth,5
+Liverpool Street,Circle,Hammersmith & City,1
+Liverpool Street,Circle,Metropolitan,1
+Liverpool Street,Circle,Elizabeth,5
+Liverpool Street,Hammersmith & City,Metropolitan,1
+Liverpool Street,Hammersmith & City,Elizabeth,5
+Liverpool Street,Metropolitan,Elizabeth,5
+London Bridge,Jubilee,Northern,4
+Mile End,Central,District,3
+Mile End,Central,Hammersmith & City,3
+Mile End,District,Hammersmith & City,1
+Monument,Circle,District,1
+Moorgate,Circle,Hammersmith & City,1
+Moorgate,Circle,Metropolitan,1
+Moorgate,Circle,Northern,4
+Moorgate,Hammersmith & City,Metropolitan,1
+Moorgate,Hammersmith & City,Northern,4
+Moorgate,Metropolitan,Northern,4
+North Greenwich,Jubilee,Elizabeth,5
+Notting Hill Gate,Central,Circle,3
+Notting Hill Gate,Central,District,3
+Notting Hill Gate,Circle,District,1
+Old Street,Northern,Northern,2
+Oxford Circus,Bakerloo,Central,3
+Oxford Circus,Bakerloo,Victoria,3
+Oxford Circus,Central,Victoria,3
+Paddington,Bakerloo,Circle,4
+Paddington,Bakerloo,District,4
+Paddington,Bakerloo,Hammersmith & City,4
+Paddington,Bakerloo,Elizabeth,5
+Paddington,Circle,District,1
+Paddington,Circle,Hammersmith & City,1
+Paddington,Circle,Elizabeth,4
+Paddington,District,Hammersmith & City,1
+Paddington,District,Elizabeth,4
+Paddington,Hammersmith & City,Elizabeth,4
+Piccadilly Circus,Bakerloo,Piccadilly,3
+Pimlico,Victoria,Victoria,1
+South Kensington,Circle,District,2
+South Kensington,Circle,Piccadilly,3
+South Kensington,District,Piccadilly,3
+Stockwell,Northern,Victoria,3
+Stratford,Central,Jubilee,4
+Stratford,Central,DLR,5
+Stratford,Central,Elizabeth,5
+Stratford,Central,Overground,4
+Stratford,Jubilee,DLR,5
+Stratford,Jubilee,Elizabeth,5
+Stratford,Jubilee,Overground,4
+Stratford,DLR,Elizabeth,3
+Stratford,DLR,Overground,4
+Stratford,Elizabeth,Overground,4
+Temple,Circle,District,1
+Tottenham Court Road,Central,Northern,3
+Tottenham Court Road,Central,Elizabeth,4
+Tottenham Court Road,Northern,Elizabeth,4
+Tower Hill,Circle,District,1
+Vauxhall,Victoria,Northern,5
+Victoria,Circle,District,3
+Victoria,Circle,Victoria,3
+Victoria,District,Victoria,3
+Warren Street,Northern,Victoria,3
+Waterloo,Bakerloo,Jubilee,4
+Waterloo,Bakerloo,Northern,4
+Waterloo,Bakerloo,Waterloo & City,5
+Waterloo,Jubilee,Northern,3
+Waterloo,Jubilee,Waterloo & City,5
+Waterloo,Northern,Waterloo & City,5
+Westminster,Circle,District,2
+Westminster,Circle,Jubilee,3
+Westminster,District,Jubilee,3
+Whitechapel,District,Hammersmith & City,1
+Whitechapel,District,Overground,4
+Whitechapel,District,Elizabeth,4
+Whitechapel,Hammersmith & City,Overground,4
+Whitechapel,Hammersmith & City,Elizabeth,4
+Whitechapel,Overground,Elizabeth,3
+Acton Town,District,Piccadilly,3
+Aldgate,Circle,Metropolitan,1
+Aldgate East,District,Hammersmith & City,2
+Barons Court,District,Piccadilly,2
+Blackhorse Road,Victoria,Overground,4
+Canada Water,Jubilee,Overground,3
+Canning Town,Jubilee,DLR,4
+Custom House,DLR,Elizabeth,4
+Ealing Broadway,Central,District,4
+Ealing Broadway,Central,Elizabeth,5
+Ealing Broadway,District,Elizabeth,4
+Gunnersbury,District,Overground,3
+Kensington (Olympia),District,Overground,3
+Kew Gardens,District,Overground,3
+Limehouse,DLR,Overground,4
+Poplar,DLR,DLR,3
+Richmond,District,Overground,3
+Shadwell,DLR,Overground,3
+Turnham Green,District,Piccadilly,3
+West Brompton,District,Overground,3
+West Ham,District,Jubilee,3
+West Ham,District,Hammersmith & City,2
+West Ham,District,DLR,5
+West Ham,Jubilee,Hammersmith & City,3
+West Ham,Jubilee,DLR,5
+West Ham,Hammersmith & City,DLR,5
+Willesden Junction,Bakerloo,Overground,4
+Camden Town,Northern,Northern,3
+Barking,District,Hammersmith & City,2
+Barking,District,Overground,4
+Barking,Hammersmith & City,Overground,4
+Finchley Road,Jubilee,Metropolitan,2
+Rayners Lane,Metropolitan,Piccadilly,2
+Uxbridge,Metropolitan,Piccadilly,2
+Hillingdon,Metropolitan,Piccadilly,2
+Ickenham,Metropolitan,Piccadilly,2
+Ruislip,Metropolitan,Piccadilly,2
+Ruislip Manor,Metropolitan,Piccadilly,2
+Eastcote,Metropolitan,Piccadilly,2
+South Harrow,Metropolitan,Piccadilly,2
+North Harrow,Metropolitan,Piccadilly,2
+Harrow-on-the-Hill,Metropolitan,Piccadilly,3
+Battersea Power Station,Northern,Northern,1
+Nine Elms,Northern,Northern,1
+Surrey Quays,Overground,Overground,3
+Woolwich,DLR,Elizabeth,4
+Tottenham Hale,Victoria,Overground,4
+Seven Sisters,Victoria,Overground,4
+Shepherd's Bush,Central,Overground,5
+Kensal Green,Bakerloo,Overground,4
+South Kensington,Circle,Piccadilly,4
+Euston,Northern,Overground,5
+Wembley Central,Bakerloo,Overground,3
+Stonebridge Park,Bakerloo,Overground,3
+Harrow & Wealdstone,Bakerloo,Overground,3
+Harlesden,Bakerloo,Overground,3
+Queen's Park,Bakerloo,Overground,3
+Aldgate East,District,Hammersmith & City,1
+Whitechapel,District,Hammersmith & City,1
+Whitechapel,District,Elizabeth,4
+Whitechapel,Hammersmith & City,Elizabeth,4
+Whitechapel,District,Overground,4
+Whitechapel,Hammersmith & City,Overground,4

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Results | Meetup Spot Calculator{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'meetup/css/meetup.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<div class="container meetup-container">
+    <div class="meetup-header">
+        <h1>Meeting Spot Results</h1>
+        <p class="meetup-subtitle">
+            Best stations for
+            {% for person in people %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ person.name }}{% endfor %}
+            to meet.
+        </p>
+    </div>
+
+    {% if disruptions %}
+    <div class="disruption-banner">
+        <strong>Service disruptions:</strong>
+        <ul>
+            {% for d in disruptions %}
+            <li><strong>{{ d.line }}:</strong> {{ d.status }}{% if d.reason %} &mdash; {{ d.reason }}{% endif %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if results.error %}
+    <div class="error-banner">{{ results.error }}</div>
+    {% else %}
+    <div class="results-layout">
+        <div class="results-main">
+            <div class="scoring-tabs">
+                <button class="tab-btn active" data-mode="fairness" title="Minimise the longest individual journey">Fairest</button>
+                <button class="tab-btn" data-mode="efficiency" title="Minimise total group travel time">Most Efficient</button>
+                <button class="tab-btn" data-mode="quick_arrival" title="Minimise the longest outbound journey">Quickest Arrival</button>
+                <button class="tab-btn" data-mode="easy_home" title="Minimise the longest return journey">Easiest Trip Home</button>
+            </div>
+
+            <div id="results-list"></div>
+        </div>
+
+        <div class="results-map-section">
+            <div id="results-map" class="meetup-map"></div>
+        </div>
+    </div>
+
+    <div class="results-footer">
+        <a href="{% url 'meetup:index' %}" class="btn btn-secondary">New Calculation</a>
+        <button class="btn btn-secondary" onclick="copyShareLink()">Copy Share Link</button>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'meetup/js/map.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var resultsData = {{ results_json|safe }};
+    var people = [
+        {% for person in people %}
+        {
+            name: "{{ person.name|escapejs }}",
+            origin_lat: {{ person.origin_lat }},
+            origin_lon: {{ person.origin_lon }},
+            origin_label: "{{ person.origin_label|escapejs }}",
+            home_lat: {{ person.home_lat }},
+            home_lon: {{ person.home_lon }},
+            home_label: "{{ person.home_label|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    var currentMode = 'fairness';
+    var map = null;
+    var markersLayer = null;
+
+    // Init map
+    map = L.map('results-map').setView([51.505, -0.09], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18,
+    }).addTo(map);
+    markersLayer = L.layerGroup().addTo(map);
+
+    function renderResults(mode) {
+        currentMode = mode;
+        var list = document.getElementById('results-list');
+        list.innerHTML = '';
+        markersLayer.clearLayers();
+
+        var modeResults = resultsData[mode] || [];
+        var bounds = [];
+
+        // Add person origin markers
+        people.forEach(function(p) {
+            var marker = L.circleMarker([p.origin_lat, p.origin_lon], {
+                radius: 7, color: '#1a5490', fillColor: '#4a9eff',
+                fillOpacity: 0.8, weight: 2
+            }).bindPopup('<strong>' + p.name + '</strong><br>' + p.origin_label);
+            markersLayer.addLayer(marker);
+            bounds.push([p.origin_lat, p.origin_lon]);
+        });
+
+        modeResults.forEach(function(r, idx) {
+            var card = document.createElement('div');
+            card.className = 'result-card' + (idx === 0 ? ' result-top' : '');
+
+            var badge = idx === 0 ? '<span class="result-badge">Best Match</span>' : '';
+            var scoreLabel = getScoreLabel(mode);
+
+            var journeyHtml = '';
+            r.outbound_details.forEach(function(j) {
+                var lines = j.lines && j.lines.length > 0 ? ' via ' + j.lines.join(', ') : '';
+                journeyHtml += '<div class="journey-row">' +
+                    '<span class="journey-name">' + j.person + '</span>' +
+                    '<span class="journey-time">' + Math.round(j.time_minutes) + ' min' + lines + '</span>' +
+                    '</div>';
+            });
+
+            var returnHtml = '';
+            r.return_details.forEach(function(j) {
+                if (j.time_minutes !== null) {
+                    var lines = j.lines && j.lines.length > 0 ? ' via ' + j.lines.join(', ') : '';
+                    returnHtml += '<div class="journey-row">' +
+                        '<span class="journey-name">' + j.person + ' home</span>' +
+                        '<span class="journey-time">' + Math.round(j.time_minutes) + ' min' + lines + '</span>' +
+                        '</div>';
+                }
+            });
+
+            card.innerHTML = '<div class="result-header">' +
+                '<h3>' + (idx + 1) + '. ' + r.station_name + ' ' + badge + '</h3>' +
+                '<span class="result-score">' + scoreLabel + ': ' + Math.round(r.score) + ' min</span>' +
+                '</div>' +
+                '<div class="journey-details">' +
+                '<h4>Getting there:</h4>' + journeyHtml +
+                (returnHtml ? '<h4>Getting home:</h4>' + returnHtml : '') +
+                '</div>' +
+                '<div class="result-actions">' +
+                '<a href="' + r.google_maps_url + '" target="_blank" rel="noopener" class="btn btn-small">Open in Google Maps</a>' +
+                '</div>';
+
+            list.appendChild(card);
+
+            // Add station marker
+            var color = idx === 0 ? '#ff6b35' : '#666';
+            var stationMarker = L.marker([r.lat, r.lon], {
+                icon: L.divIcon({
+                    className: 'station-marker',
+                    html: '<div style="background:' + color + ';color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);">' + (idx + 1) + '</div>',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14],
+                })
+            }).bindPopup('<strong>' + r.station_name + '</strong><br>' + scoreLabel + ': ' + Math.round(r.score) + ' min');
+            markersLayer.addLayer(stationMarker);
+            bounds.push([r.lat, r.lon]);
+        });
+
+        if (bounds.length > 0) {
+            map.fitBounds(bounds, {padding: [30, 30]});
+        }
+
+        // Update active tab
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+    }
+
+    function getScoreLabel(mode) {
+        var labels = {
+            fairness: 'Fairness',
+            efficiency: 'Total time',
+            quick_arrival: 'Max journey',
+            easy_home: 'Max return'
+        };
+        return labels[mode] || mode;
+    }
+
+    // Tab click handlers
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            renderResults(btn.dataset.mode);
+        });
+    });
+
+    // Initial render
+    renderResults('fairness');
+});
+
+function copyShareLink() {
+    navigator.clipboard.writeText(window.location.href).then(function() {
+        var btn = event.target;
+        btn.textContent = 'Link Copied';
+        setTimeout(function() { btn.textContent = 'Copy Share Link'; }, 2000);
+    });
+}
+</script>
+{% endblock %}
