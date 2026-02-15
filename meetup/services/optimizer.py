@@ -11,7 +11,7 @@ Uses the local NetworkX graph for all journey time calculations.
 """
 import math
 import networkx as nx
-from .graph import get_graph, get_stations, get_journey_time, get_journey_path, get_lines_used
+from .graph import get_graph, get_stations, get_journey, get_lines_used
 from .walking import find_nearest_stations, haversine_distance
 
 # How far from the centroid to search for candidate stations (km)
@@ -94,13 +94,13 @@ def _get_journey_details(graph, from_node, to_station_id):
     """
     Get detailed journey info from a node to a station hub.
     Returns dict with time, lines used, and path info.
+    Uses a single Dijkstra call for both time and path.
     """
     hub_node = str(to_station_id)
-    time = get_journey_time(graph, from_node, hub_node)
+    time, path = get_journey(graph, from_node, hub_node)
     if time is None:
         return None
 
-    path = get_journey_path(graph, from_node, hub_node)
     lines = get_lines_used(graph, path) if path else set()
 
     return {
@@ -260,6 +260,10 @@ def calculate_meetup_spots(people):
                     'lat': s['lat'],
                     'lon': s['lon'],
                     'score': round(s[key], 1),
+                    'score_fairness': round(s['score_fairness'], 1),
+                    'score_efficiency': round(s['score_efficiency'], 1),
+                    'score_quick_arrival': round(s['score_quick_arrival'], 1),
+                    'score_easy_home': round(s['score_easy_home'], 1),
                     'outbound_details': s['outbound_details'],
                     'return_details': s['return_details'],
                     'lines_used': s['lines_used'],

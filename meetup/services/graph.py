@@ -206,25 +206,35 @@ def get_station_lookup():
     return _station_lookup
 
 
+def get_journey(graph, from_node, to_node):
+    """
+    Get shortest journey time and path between two nodes in a single
+    Dijkstra call. Returns (time_in_minutes, path_list) or (None, None)
+    if no path exists.
+    """
+    try:
+        length, path = nx.single_source_dijkstra(
+            graph, from_node, to_node, weight='weight')
+        return length, path
+    except (nx.NetworkXNoPath, nx.NodeNotFound):
+        return None, None
+
+
 def get_journey_time(graph, from_node, to_node):
     """
     Get shortest journey time between two nodes in the graph.
     Returns time in minutes, or None if no path exists.
     """
-    try:
-        return nx.shortest_path_length(graph, from_node, to_node, weight='weight')
-    except (nx.NetworkXNoPath, nx.NodeNotFound):
-        return None
+    time, _path = get_journey(graph, from_node, to_node)
+    return time
 
 
 def get_journey_path(graph, from_node, to_node):
     """
     Get shortest path between two nodes. Returns list of node IDs.
     """
-    try:
-        return nx.shortest_path(graph, from_node, to_node, weight='weight')
-    except (nx.NetworkXNoPath, nx.NodeNotFound):
-        return None
+    _time, path = get_journey(graph, from_node, to_node)
+    return path
 
 
 def get_lines_used(graph, path):

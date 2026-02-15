@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
@@ -84,32 +84,29 @@ def calculate(request):
     if all_lines:
         disruptions = get_line_disruptions(all_lines)
 
-    # Save results (save the fairness-sorted top results)
-    for r in results.get('fairness', []):
-        MeetupResult.objects.create(
-            session=session,
-            station_name=r['station_name'],
-            station_lat=r['lat'],
-            station_lon=r['lon'],
-            score_fairness=r['score'],
-            score_efficiency=next(
-                (s['score'] for s in results.get('efficiency', [])
-                 if s['station_id'] == r['station_id']), None
-            ),
-            score_quick_arrival=next(
-                (s['score'] for s in results.get('quick_arrival', [])
-                 if s['station_id'] == r['station_id']), None
-            ),
-            score_easy_home=next(
-                (s['score'] for s in results.get('easy_home', [])
-                 if s['station_id'] == r['station_id']), None
-            ),
-            journey_details_json=json.dumps({
-                'outbound': r['outbound_details'],
-                'return': r['return_details'],
-            }),
-            google_maps_url=r['google_maps_url'],
-        )
+    # Save results — all unique stations across all 4 scoring modes
+    station_data = {}
+    for mode in ['fairness', 'efficiency', 'quick_arrival', 'easy_home']:
+        for r in results.get(mode, []):
+            sid = r['station_id']
+            if sid not in station_data:
+                station_data[sid] = {
+                    'station_name': r['station_name'],
+                    'station_lat': r['lat'],
+                    'station_lon': r['lon'],
+                    'score_fairness': r['score_fairness'],
+                    'score_efficiency': r['score_efficiency'],
+                    'score_quick_arrival': r['score_quick_arrival'],
+                    'score_easy_home': r['score_easy_home'],
+                    'journey_details_json': json.dumps({
+                        'outbound': r['outbound_details'],
+                        'return': r['return_details'],
+                    }),
+                    'google_maps_url': r['google_maps_url'],
+                }
+
+    for data in station_data.values():
+        MeetupResult.objects.create(session=session, **data)
 
     return JsonResponse({
         'session_uuid': str(session.uuid),
@@ -119,32 +116,59 @@ def calculate(request):
 
 
 def results(request, session_uuid):
-    """Display results for a meetup session."""
+    """Display results for a meetup session, loaded from saved DB records."""
     session = get_object_or_404(MeetupSession, uuid=session_uuid)
     people = session.people.all()
-    saved_results = session.results.all()
+    saved_results = list(session.results.all())
 
-    # Re-calculate to get all scoring modes
-    people_for_calc = [
-        {
-            'name': p.name,
-            'origin_lat': p.origin_lat,
-            'origin_lon': p.origin_lon,
-            'home_lat': p.home_lat,
-            'home_lon': p.home_lon,
+    if not saved_results:
+        context = {
+            'session': session,
+            'people': people,
+            'results': {'error': 'No results found for this session.'},
+            'results_json': json.dumps({'error': 'No results found'}),
+            'disruptions': [],
         }
-        for p in people
+        return render(request, 'meetup/results.html', context)
+
+    # Reconstruct per-mode results from saved DB records
+    all_lines = set()
+    calc_results = {}
+    mode_fields = [
+        ('fairness', 'score_fairness'),
+        ('efficiency', 'score_efficiency'),
+        ('quick_arrival', 'score_quick_arrival'),
+        ('easy_home', 'score_easy_home'),
     ]
 
-    calc_results = calculate_meetup_spots(people_for_calc)
+    for mode, score_field in mode_fields:
+        mode_records = [r for r in saved_results
+                        if getattr(r, score_field) is not None]
+        mode_records.sort(key=lambda r: getattr(r, score_field))
 
-    # Check disruptions
-    all_lines = set()
-    if not isinstance(calc_results, dict) or 'error' not in calc_results:
-        for mode_results in calc_results.values():
-            for r in mode_results:
-                all_lines.update(r.get('lines_used', []))
+        calc_results[mode] = []
+        for r in mode_records[:5]:
+            details = r.journey_details
+            outbound = details.get('outbound', [])
+            return_details = details.get('return', [])
 
+            lines_used = set()
+            for d in outbound + return_details:
+                lines_used.update(d.get('lines', []))
+            all_lines.update(lines_used)
+
+            calc_results[mode].append({
+                'station_name': r.station_name,
+                'lat': r.station_lat,
+                'lon': r.station_lon,
+                'score': getattr(r, score_field),
+                'outbound_details': outbound,
+                'return_details': return_details,
+                'lines_used': sorted(lines_used),
+                'google_maps_url': r.google_maps_url,
+            })
+
+    # Check live disruptions for lines used in results
     disruptions = get_line_disruptions(all_lines) if all_lines else []
 
     context = {

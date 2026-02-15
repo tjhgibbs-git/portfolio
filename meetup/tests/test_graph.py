@@ -1,6 +1,6 @@
 from django.test import TestCase
 from meetup.services.graph import (
-    get_graph, get_stations, get_journey_time, get_journey_path,
+    get_graph, get_stations, get_journey, get_journey_time, get_journey_path,
     get_lines_used, get_station_lookup, reset_cache,
 )
 
@@ -108,10 +108,38 @@ class GraphRoutingTest(TestCase):
         real_lines = lines - {'transfer', 'walking'}
         self.assertGreater(len(real_lines), 0)
 
+    def test_get_journey_returns_time_and_path(self):
+        """get_journey should return both time and path in a single call."""
+        bank = self._find_station('Bank')
+        waterloo = self._find_station('Waterloo')
+        time, path = get_journey(self.graph, str(bank), str(waterloo))
+        self.assertIsNotNone(time)
+        self.assertIsNotNone(path)
+        self.assertIsInstance(time, float)
+        self.assertIsInstance(path, list)
+        self.assertGreater(len(path), 1)
+        # Time should match what get_journey_time returns
+        time_only = get_journey_time(self.graph, str(bank), str(waterloo))
+        self.assertAlmostEqual(time, time_only, places=5)
+
+    def test_get_journey_unreachable_returns_none(self):
+        """get_journey with non-existent node should return (None, None)."""
+        time, path = get_journey(self.graph, 'nonexistent', '12')
+        self.assertIsNone(time)
+        self.assertIsNone(path)
+
     def test_unreachable_returns_none(self):
         """Non-existent station should return None."""
         time = get_journey_time(self.graph, 'nonexistent', '12')
         self.assertIsNone(time)
+
+    def test_route_symmetry(self):
+        """Undirected graph: A->B time should equal B->A time."""
+        bank = self._find_station('Bank')
+        waterloo = self._find_station('Waterloo')
+        time_ab = get_journey_time(self.graph, str(bank), str(waterloo))
+        time_ba = get_journey_time(self.graph, str(waterloo), str(bank))
+        self.assertAlmostEqual(time_ab, time_ba, places=5)
 
     def test_reset_cache(self):
         """reset_cache should allow fresh reload."""
