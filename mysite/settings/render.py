@@ -8,12 +8,17 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['portfolio-1-mavz.onrender.com']
+ALLOWED_HOSTS = [
+    'portfolio-1-mavz.onrender.com',
+    '.onrender.com',
+]
 
 # Allow Render's hostname
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+CSRF_TRUSTED_ORIGINS = ['https://portfolio-1-mavz.onrender.com']
 
 # SQLite is fine for a personal portfolio on the free tier
 DATABASES = {
