@@ -1,6 +1,7 @@
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 
 from .models import MeetupSession, Person, MeetupResult
@@ -9,6 +10,7 @@ from .services.optimizer import calculate_meetup_spots
 from .services.disruptions import get_line_disruptions
 
 
+@ensure_csrf_cookie
 def index(request):
     """Main page - add people and calculate meeting spot."""
     return render(request, 'meetup/index.html')
