@@ -12,3 +12,8 @@ services:
         generateValue: true
       - key: PYTHON_VERSION
         value: 3.11.11
+      - key: RENDER_EXTERNAL_HOSTNAME
+        fromService:
+          name: portfolio
+          type: web
+          property: host
