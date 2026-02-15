@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Meetup Spot Calculator | Thomas Gibbs{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'meetup/css/meetup.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<div class="container meetup-container">
+    <div class="meetup-header">
+        <h1>London Meetup Spot</h1>
+        <p class="meetup-subtitle">Find the best tube/rail station for your group to meet at. Add everyone's locations and we'll calculate the fairest meeting point.</p>
+    </div>
+
+    <div class="meetup-layout">
+        <div class="meetup-form-section">
+            <div id="people-container">
+                <!-- Person cards will be added here dynamically -->
+            </div>
+
+            <button type="button" id="add-person-btn" class="btn btn-secondary">
+                + Add Person
+            </button>
+
+            <div class="meetup-actions">
+                <button type="button" id="calculate-btn" class="btn btn-primary" disabled>
+                    Calculate Meeting Spot
+                </button>
+                <p class="help-text" id="min-people-msg">Add at least 2 people to calculate.</p>
+            </div>
+
+            <div id="error-message" class="error-banner" style="display: none;"></div>
+            <div id="loading" class="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Calculating optimal meeting spot...</p>
+            </div>
+        </div>
+
+        <div class="meetup-map-section">
+            <div id="map" class="meetup-map"></div>
+        </div>
+    </div>
+</div>
+
+<template id="person-template">
+    <div class="person-card" data-person-index="">
+        <div class="person-header">
+            <input type="text" class="person-name" placeholder="Name" value="">
+            <button type="button" class="btn-remove" title="Remove person">&times;</button>
+        </div>
+        <div class="location-field">
+            <label>Coming from:</label>
+            <div class="autocomplete-wrapper">
+                <input type="text" class="location-input origin-input" placeholder="Search address, postcode, or station..." autocomplete="off">
+                <div class="autocomplete-dropdown origin-dropdown"></div>
+            </div>
+            <input type="hidden" class="origin-lat">
+            <input type="hidden" class="origin-lon">
+            <input type="hidden" class="origin-label">
+        </div>
+        <div class="location-field">
+            <label>Going home to:</label>
+            <div class="autocomplete-wrapper">
+                <input type="text" class="location-input home-input" placeholder="Search address, postcode, or station..." autocomplete="off">
+                <div class="autocomplete-dropdown home-dropdown"></div>
+            </div>
+            <input type="hidden" class="home-lat">
+            <input type="hidden" class="home-lon">
+            <input type="hidden" class="home-label">
+        </div>
+    </div>
+</template>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'meetup/js/autocomplete.js' %}"></script>
+<script src="{% static 'meetup/js/map.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('people-container');
+    const addBtn = document.getElementById('add-person-btn');
+    const calcBtn = document.getElementById('calculate-btn');
+    const minMsg = document.getElementById('min-people-msg');
+    const errorDiv = document.getElementById('error-message');
+    const loadingDiv = document.getElementById('loading');
+    const template = document.getElementById('person-template');
+    let personCount = 0;
+    const defaultNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'];
+
+    function addPerson(name) {
+        const card = template.content.cloneNode(true);
+        const div = card.querySelector('.person-card');
+        div.dataset.personIndex = personCount;
+
+        const nameInput = card.querySelector('.person-name');
+        nameInput.value = name || defaultNames[personCount] || `Person ${personCount + 1}`;
+
+        container.appendChild(card);
+
+        // Set up autocomplete on the new inputs
+        const originInput = div.querySelector('.origin-input');
+        const homeInput = div.querySelector('.home-input');
+        setupAutocomplete(originInput, div.querySelector('.origin-dropdown'), function(result) {
+            div.querySelector('.origin-lat').value = result.lat;
+            div.querySelector('.origin-lon').value = result.lon;
+            div.querySelector('.origin-label').value = result.label;
+            originInput.value = result.label;
+            updateMap();
+            updateCalcButton();
+        });
+        setupAutocomplete(homeInput, div.querySelector('.home-dropdown'), function(result) {
+            div.querySelector('.home-lat').value = result.lat;
+            div.querySelector('.home-lon').value = result.lon;
+            div.querySelector('.home-label').value = result.label;
+            homeInput.value = result.label;
+            updateCalcButton();
+        });
+
+        // Remove button
+        div.querySelector('.btn-remove').addEventListener('click', function() {
+            div.remove();
+            personCount--;
+            updateCalcButton();
+            updateMap();
+        });
+
+        personCount++;
+        updateCalcButton();
+    }
+
+    function updateCalcButton() {
+        const cards = container.querySelectorAll('.person-card');
+        const complete = Array.from(cards).filter(function(card) {
+            return card.querySelector('.origin-lat').value &&
+                   card.querySelector('.home-lat').value;
+        });
+        const canCalc = complete.length >= 2;
+        calcBtn.disabled = !canCalc;
+        minMsg.style.display = canCalc ? 'none' : 'block';
+    }
+
+    function updateMap() {
+        const cards = container.querySelectorAll('.person-card');
+        const markers = [];
+        cards.forEach(function(card) {
+            const lat = card.querySelector('.origin-lat').value;
+            const lon = card.querySelector('.origin-lon').value;
+            const name = card.querySelector('.person-name').value;
+            if (lat && lon) {
+                markers.push({lat: parseFloat(lat), lon: parseFloat(lon), name: name});
+            }
+        });
+        if (typeof updateMapMarkers === 'function') {
+            updateMapMarkers(markers);
+        }
+    }
+
+    addBtn.addEventListener('click', function() { addPerson(); });
+
+    calcBtn.addEventListener('click', function() {
+        const cards = container.querySelectorAll('.person-card');
+        const people = [];
+        cards.forEach(function(card) {
+            const originLat = card.querySelector('.origin-lat').value;
+            const originLon = card.querySelector('.origin-lon').value;
+            const homeLat = card.querySelector('.home-lat').value;
+            const homeLon = card.querySelector('.home-lon').value;
+            if (originLat && originLon && homeLat && homeLon) {
+                people.push({
+                    name: card.querySelector('.person-name').value,
+                    origin_lat: parseFloat(originLat),
+                    origin_lon: parseFloat(originLon),
+                    origin_label: card.querySelector('.origin-label').value,
+                    home_lat: parseFloat(homeLat),
+                    home_lon: parseFloat(homeLon),
+                    home_label: card.querySelector('.home-label').value,
+                });
+            }
+        });
+
+        if (people.length < 2) {
+            errorDiv.textContent = 'Need at least 2 complete entries.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        errorDiv.style.display = 'none';
+        loadingDiv.style.display = 'flex';
+        calcBtn.disabled = true;
+
+        fetch('{% url "meetup:calculate" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(),
+            },
+            body: JSON.stringify({people: people}),
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            loadingDiv.style.display = 'none';
+            if (data.error) {
+                errorDiv.textContent = data.error;
+                errorDiv.style.display = 'block';
+                calcBtn.disabled = false;
+            } else {
+                window.location.href = '/meetup/results/' + data.session_uuid + '/';
+            }
+        })
+        .catch(function(err) {
+            loadingDiv.style.display = 'none';
+            errorDiv.textContent = 'Something went wrong. Please try again.';
+            errorDiv.style.display = 'block';
+            calcBtn.disabled = false;
+        });
+    });
+
+    function getCsrfToken() {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                return cookie.substring('csrftoken='.length);
+            }
+        }
+        return '';
+    }
+
+    // Start with 2 people
+    addPerson('Alice');
+    addPerson('Bob');
+
+    // Init map
+    if (typeof initMap === 'function') {
+        initMap('map');
+    }
+});
+</script>
+{% endblock %}

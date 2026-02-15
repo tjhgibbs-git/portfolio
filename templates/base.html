@@ -37,6 +37,7 @@
                     <li><a href="{% url 'portfolio' %}" class="{% if 'projects' in request.path %}active{% endif %}">Projects</a></li>
                     <li><a href="{% url 'recipes:recipe_list' %}" class="{% if 'recipes' in request.path %}active{% endif %}">Recipes</a></li>
                     <li><a href="{% url 'tools:list' %}" class="{% if 'tools' in request.path %}active{% endif %}">Tools</a></li>
+                    <li><a href="{% url 'meetup:index' %}" class="{% if 'meetup' in request.path %}active{% endif %}">Meetup</a></li>
                 </ul>
             </nav>
         </div>

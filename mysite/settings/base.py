@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'blog',
     'tools',  # New tools app
     'recipes',  # Recipe book app
+    'meetup',  # London meetup spot calculator
 ]
 
 MIDDLEWARE = [
