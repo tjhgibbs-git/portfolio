@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: ./build.sh
-    startCommand: gunicorn mysite.wsgi:application
+    startCommand: ./start.sh
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: mysite.settings.render
